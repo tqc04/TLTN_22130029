@@ -1,0 +1,48 @@
+﻿server:
+  port: 8091
+
+spring:
+  application:
+    name: cart-service
+  cloud:
+    config:
+      uri: http://localhost:8888
+      
+  config:
+    import: optional:configserver:http://localhost:8888
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    database: 0
+    timeout: 2000ms
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1ms
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+
+# Service URLs
+services:
+  product:
+    base-url: ${PRODUCT_SERVICE_BASE_URL:http://localhost:8083}
+  voucher:
+    base-url: ${VOUCHER_SERVICE_BASE_URL:http://localhost:8092}
+  inventory:
+    base-url: ${INVENTORY_SERVICE_BASE_URL:http://localhost:8093}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+

@@ -1,0 +1,6 @@
+# Dependencies for ML training data extraction
+pymysql==1.1.0
+pandas>=2.0.0
+numpy<2.0.0
+python-dotenv==1.0.0
+

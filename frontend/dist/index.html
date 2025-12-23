@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI E-commerce Platform</title>
+    
+    <!-- Premium Fonts -->
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+
+    <!-- Critical CSS for better performance -->
+    <link rel="stylesheet" href="/critical.css" />
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="data:application/octet-stream;base64,aW1wb3J0IFJlYWN0IGZyb20gJ3JlYWN0Jw0KaW1wb3J0IFJlYWN0RE9NIGZyb20gJ3JlYWN0LWRvbS9jbGllbnQnDQppbXBvcnQgeyBCcm93c2VyUm91dGVyIH0gZnJvbSAncmVhY3Qtcm91dGVyLWRvbScNCmltcG9ydCB7IFRoZW1lUHJvdmlkZXIgfSBmcm9tICdAbXVpL21hdGVyaWFsL3N0eWxlcycNCmltcG9ydCBDc3NCYXNlbGluZSBmcm9tICdAbXVpL21hdGVyaWFsL0Nzc0Jhc2VsaW5lJw0KaW1wb3J0IHsgUXVlcnlDbGllbnQsIFF1ZXJ5Q2xpZW50UHJvdmlkZXIgfSBmcm9tICdAdGFuc3RhY2svcmVhY3QtcXVlcnknDQoNCi8vIEVuYWJsZSBSZWFjdCBGYXN0IFJlZnJlc2ggaW4gZGV2ZWxvcG1lbnQNCmlmIChpbXBvcnQubWV0YS5lbnYuREVWKSB7DQogIGltcG9ydC5tZXRhLmhvdD8uYWNjZXB0KCkNCn0NCg0KLy8gUHJlbG9hZCBjcml0aWNhbCByZXNvdXJjZXMgZm9yIGJldHRlciBwZXJmb3JtYW5jZQ0KY29uc3QgcHJlbG9hZENyaXRpY2FsUmVzb3VyY2VzID0gKCkgPT4gew0KICAvLyBQcmVsb2FkIGZvbnRzDQogIGNvbnN0IGZvbnRMaW5rID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnbGluaycpDQogIGZvbnRMaW5rLnJlbCA9ICdwcmVjb25uZWN0Jw0KICBmb250TGluay5ocmVmID0gJ2h0dHBzOi8vZm9udHMuZ29vZ2xlYXBpcy5jb20nDQogIGRvY3VtZW50LmhlYWQuYXBwZW5kQ2hpbGQoZm9udExpbmspDQoNCiAgY29uc3QgZm9udExpbmsyID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnbGluaycpDQogIGZvbnRMaW5rMi5yZWwgPSAncHJlY29ubmVjdCcNCiAgZm9udExpbmsyLmhyZWYgPSAnaHR0cHM6Ly9mb250cy5nc3RhdGljLmNvbScNCiAgZm9udExpbmsyLmNyb3NzT3JpZ2luID0gJ2Fub255bW91cycNCiAgZG9jdW1lbnQuaGVhZC5hcHBlbmRDaGlsZChmb250TGluazIpDQp9DQoNCmltcG9ydCBBcHAgZnJvbSAnLi9BcHAnDQppbXBvcnQgdGhlbWUgZnJvbSAnLi90aGVtZS90aGVtZScNCmltcG9ydCB7IEF1dGhQcm92aWRlciB9IGZyb20gJy4vY29udGV4dHMvQXV0aENvbnRleHQnDQppbXBvcnQgeyBOb3RpZmljYXRpb25Qcm92aWRlciB9IGZyb20gJy4vY29udGV4dHMvTm90aWZpY2F0aW9uQ29udGV4dCcNCg0KLy8gT3B0aW1pemUgYnVuZGxlIGJ5IGxhenkgbG9hZGluZyBoZWF2eSBsaWJyYXJpZXMNCmltcG9ydCgnLi91dGlscy9hbmFseXRpY3MnKQ0KaW1wb3J0ICcuL2kxOG4nDQppbXBvcnQgJ25wcm9ncmVzcy9ucHJvZ3Jlc3MuY3NzJw0KDQovLyBDcmVhdGUgYSBjbGllbnQgZm9yIFJlYWN0IFF1ZXJ5IHdpdGggb3B0aW1pemVkIHBlcmZvcm1hbmNlIHNldHRpbmdzDQpjb25zdCBxdWVyeUNsaWVudCA9IG5ldyBRdWVyeUNsaWVudCh7DQogIGRlZmF1bHRPcHRpb25zOiB7DQogICAgcXVlcmllczogew0KICAgICAgc3RhbGVUaW1lOiAxMCAqIDYwICogMTAwMCwgLy8gMTAgbWludXRlcyBmb3IgYmV0dGVyIGNhY2hpbmcNCiAgICAgIGdjVGltZTogMTUgKiA2MCAqIDEwMDAsIC8vIDE1IG1pbnV0ZXMgZ2FyYmFnZSBjb2xsZWN0aW9uIHRpbWUNCiAgICAgIHJldHJ5OiAzLA0KICAgICAgcmV0cnlEZWxheTogKGF0dGVtcHRJbmRleCkgPT4gTWF0aC5taW4oMTAwMCAqIDIgKiogYXR0ZW1wdEluZGV4LCAzMDAwMCksDQogICAgICByZWZldGNoT25XaW5kb3dGb2N1czogZmFsc2UsDQogICAgICByZWZldGNoT25SZWNvbm5lY3Q6IHRydWUsDQogICAgfSwNCiAgICBtdXRhdGlvbnM6IHsNCiAgICAgIHJldHJ5OiAxLA0KICAgIH0sDQogIH0sDQp9KQ0KDQovLyBQcmVsb2FkIGNyaXRpY2FsIHJlc291cmNlcw0KcHJlbG9hZENyaXRpY2FsUmVzb3VyY2VzKCkNCg0KLy8gUmVnaXN0ZXIgU2VydmljZSBXb3JrZXIgZm9yIG9mZmxpbmUgc3VwcG9ydCBhbmQgY2FjaGluZw0KaWYgKCdzZXJ2aWNlV29ya2VyJyBpbiBuYXZpZ2F0b3IgJiYgaW1wb3J0Lm1ldGEuZW52LlBST0QpIHsNCiAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoJ2xvYWQnLCAoKSA9PiB7DQogICAgbmF2aWdhdG9yLnNlcnZpY2VXb3JrZXIucmVnaXN0ZXIoJy9zdy5qcycpDQogICAgICAudGhlbigocmVnaXN0cmF0aW9uKSA9PiB7DQogICAgICAgIGNvbnNvbGUubG9nKCdTZXJ2aWNlIFdvcmtlciByZWdpc3RlcmVkIHN1Y2Nlc3NmdWxseTonLCByZWdpc3RyYXRpb24uc2NvcGUpOw0KICAgICAgfSkNCiAgICAgIC5jYXRjaCgoZXJyb3IpID0+IHsNCiAgICAgICAgY29uc29sZS5sb2coJ1NlcnZpY2UgV29ya2VyIHJlZ2lzdHJhdGlvbiBmYWlsZWQ6JywgZXJyb3IpOw0KICAgICAgfSk7DQogIH0pOw0KfQ0KDQpSZWFjdERPTS5jcmVhdGVSb290KGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyb290JykhKS5yZW5kZXIoDQogIDxSZWFjdC5TdHJpY3RNb2RlPg0KICAgIDxRdWVyeUNsaWVudFByb3ZpZGVyIGNsaWVudD17cXVlcnlDbGllbnR9Pg0KICAgICAgPEJyb3dzZXJSb3V0ZXINCiAgICAgICAgZnV0dXJlPXt7DQogICAgICAgICAgdjdfc3RhcnRUcmFuc2l0aW9uOiB0cnVlLA0KICAgICAgICAgIHY3X3JlbGF0aXZlU3BsYXRQYXRoOiB0cnVlDQogICAgICAgIH19DQogICAgICA+DQogICAgICAgIDxUaGVtZVByb3ZpZGVyIHRoZW1lPXt0aGVtZX0+DQogICAgICAgICAgPENzc0Jhc2VsaW5lIC8+DQogICAgICAgICAgPEF1dGhQcm92aWRlcj4NCiAgICAgICAgICAgIDxOb3RpZmljYXRpb25Qcm92aWRlcj4NCiAgICAgICAgICAgICAgPEFwcCAvPg0KICAgICAgICAgICAgPC9Ob3RpZmljYXRpb25Qcm92aWRlcj4NCiAgICAgICAgICA8L0F1dGhQcm92aWRlcj4NCiAgICAgICAgPC9UaGVtZVByb3ZpZGVyPg0KICAgICAgPC9Ccm93c2VyUm91dGVyPg0KICAgIDwvUXVlcnlDbGllbnRQcm92aWRlcj4NCiAgPC9SZWFjdC5TdHJpY3RNb2RlPiwNCik=" as="script" />
+    <link rel="dns-prefetch" href="//localhost:8080" />
+    <link rel="dns-prefetch" href="//localhost:8084" />
+    <link rel="dns-prefetch" href="//localhost:8085" />
+    <script type="module" crossorigin src="/js/index-DCV20a9Q.js"></script>
+    <link rel="modulepreload" crossorigin href="/js/chunk-DviAhpiH.js">
+    <link rel="modulepreload" crossorigin href="/js/chunk-Do_a5Wyq.js">
+    <link rel="modulepreload" crossorigin href="/js/chunk-D0fInH4s.js">
+    <link rel="modulepreload" crossorigin href="/js/chunk-B-IQjRUg.js">
+    <link rel="modulepreload" crossorigin href="/js/chunk-C0mTAqnC.js">
+    <link rel="modulepreload" crossorigin href="/js/chunk-UD5OBSiC.js">
+    <link rel="modulepreload" crossorigin href="/js/chunk-CyT0i1D5.js">
+    <link rel="modulepreload" crossorigin href="/js/chunk-BWXzDsRL.js">
+    <link rel="modulepreload" crossorigin href="/js/chunk-C9y0XzQn.js">
+    <link rel="modulepreload" crossorigin href="/js/index-DCV20a9Q.js">
+    <link rel="modulepreload" crossorigin href="/js/chunk-DyV-rrO-.js">
+    <link rel="modulepreload" crossorigin href="/js/chunk-61qy-ame.js">
+    <link rel="stylesheet" crossorigin href="/css/vendor-BgDCIyLK.css">
+  </head>
+    <body>
+    <div id="root"></div>
+    <script>
+      // Polyfill for global variable
+      if (typeof global === 'undefined') {
+        window.global = window;
+      }
+    </script>
+  </body>
+</html> 

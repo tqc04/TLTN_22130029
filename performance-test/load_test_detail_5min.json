@@ -1,0 +1,74 @@
+{
+  "load_detail": [
+    {
+      "minute": 1,
+      "stats": {
+        "total_requests": 2455,
+        "successful_requests": 2455,
+        "failed_requests": 0,
+        "error_rate": 0.0,
+        "avg_ms": 6.776998970513431,
+        "min_ms": 0.0,
+        "max_ms": 18.612384796142578,
+        "throughput": 40.9
+      },
+      "timestamp": "2025-12-11T09:10:47.281173"
+    },
+    {
+      "minute": 2,
+      "stats": {
+        "total_requests": 2468,
+        "successful_requests": 2468,
+        "failed_requests": 0,
+        "error_rate": 0.0,
+        "avg_ms": 6.762017307250581,
+        "min_ms": 0.0,
+        "max_ms": 20.406484603881836,
+        "throughput": 41.15
+      },
+      "timestamp": "2025-12-11T09:11:47.303801"
+    },
+    {
+      "minute": 3,
+      "stats": {
+        "total_requests": 2460,
+        "successful_requests": 2460,
+        "failed_requests": 0,
+        "error_rate": 0.0,
+        "avg_ms": 6.8299771324405825,
+        "min_ms": 0.0,
+        "max_ms": 23.762941360473633,
+        "throughput": 40.99
+      },
+      "timestamp": "2025-12-11T09:12:47.286261"
+    },
+    {
+      "minute": 4,
+      "stats": {
+        "total_requests": 2404,
+        "successful_requests": 2404,
+        "failed_requests": 0,
+        "error_rate": 0.0,
+        "avg_ms": 7.355220702642609,
+        "min_ms": 0.0,
+        "max_ms": 99.86329078674316,
+        "throughput": 40.08
+      },
+      "timestamp": "2025-12-11T09:13:47.298124"
+    },
+    {
+      "minute": 5,
+      "stats": {
+        "total_requests": 2369,
+        "successful_requests": 2369,
+        "failed_requests": 0,
+        "error_rate": 0.0,
+        "avg_ms": 7.625317563483261,
+        "min_ms": 3.0057430267333984,
+        "max_ms": 107.4209213256836,
+        "throughput": 39.48
+      },
+      "timestamp": "2025-12-11T09:14:47.282791"
+    }
+  ]
+}

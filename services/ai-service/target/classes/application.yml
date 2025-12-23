@@ -1,0 +1,67 @@
+﻿server:
+  port: 8088
+
+spring:
+  application:
+    name: ai-service
+  cloud:
+    config:
+      uri: http://localhost:8888
+  config:
+    import: optional:configserver:http://localhost:8888
+  datasource:
+    # Use main ecommerce database to access products, categories, brands directly
+    url: jdbc:mysql://localhost:3306/product_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh&characterEncoding=UTF-8&useUnicode=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+
+
+gemini:
+  api:
+    key: ${GEMINI_API_KEY:AIzaSyBdUm0PTtZ3JZOM5f6o58vABWpbnBUU22c}
+    url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent
+  rate:
+    limit:
+      rps: ${GEMINI_RATE_LIMIT_RPS:1}
+  retry:
+    max-attempts: ${GEMINI_RETRY_MAX_ATTEMPTS:1}
+    base-backoff-ms: ${GEMINI_RETRY_BASE_BACKOFF_MS:300}
+  circuit-breaker:
+    failure-threshold: 10
+    timeout-ms: 30000
+  embedding:
+    model: text-embedding-004
+    url: https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent
+
+
+eureka:
+  client:
+    enabled: true  # ✅ Đã bật lại
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+services:
+  product:
+    base-url: ${PRODUCT_SERVICE_BASE_URL:http://localhost:8083}
+  reco:
+    base-url: http://localhost:8000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+
+
+

@@ -1,0 +1,334 @@
+# ===========================================
+# CENTRALIZED CONFIGURATION FOR ALL SERVICES
+# ===========================================
+
+# ===========================================
+# DATABASE CONFIGURATION
+# ===========================================
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/ecommerce_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh&characterEncoding=UTF-8&useUnicode=true}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 10
+      connection-timeout: 20000
+      idle-timeout: 300000
+      max-lifetime: 1200000
+      leak-detection-threshold: 60000
+      connection-test-query: SELECT 1
+      validation-timeout: 5000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        jdbc:
+          batch_size: 50
+          time_zone: Asia/Ho_Chi_Minh
+        connection:
+          characterEncoding: utf8
+          useUnicode: true
+          CharSet: utf8
+        order_inserts: true
+        order_updates: true
+
+  jackson:
+    time-zone: Asia/Ho_Chi_Minh
+
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=1h
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 60000
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SPRING_MAIL_USERNAME:}
+    password: ${SPRING_MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:}
+            client-secret: ${GOOGLE_CLIENT_SECRET:}
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+            scope: openid,profile,email
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
+            user-name-attribute: sub
+
+# ===========================================
+# AI CONFIGURATION
+# ===========================================
+gemini:
+  api:
+    key: ${GEMINI_API_KEY:}
+    url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent
+  model: gemini-2.5-flash
+  embedding:
+    model: text-embedding-004
+    url: https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent
+  circuit-breaker:
+    failure-threshold: 5
+    timeout-ms: 60000
+  rate:
+    limit:
+      rps: ${GEMINI_RATE_LIMIT_RPS:1}
+  retry:
+    max-attempts: ${GEMINI_RETRY_MAX_ATTEMPTS:5}
+    base-backoff-ms: ${GEMINI_RETRY_BASE_BACKOFF_MS:2000}
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY:}
+  model: gpt-4o-mini
+  temperature: 0.7
+  embedding:
+    model: text-embedding-ada-002
+
+# ===========================================
+# PAYMENT GATEWAYS
+# ===========================================
+stripe:
+  api:
+    key: ${STRIPE_API_KEY:}
+  webhook:
+    secret: ${STRIPE_WEBHOOK_SECRET:}
+
+vnpay:
+  merchant:
+    id: ${VNPAY_MERCHANT_ID:}
+  secret:
+    key: ${VNPAY_SECRET_KEY:}
+  return:
+    url: ${VNPAY_RETURN_URL:http://localhost:3000/vn_pay/vnpayReturn}
+  payment:
+    url: ${VNPAY_PAYMENT_URL:https://sandbox.vnpayment.vn/paymentv2/vpcpay.html}
+  api:
+    url: ${VNPAY_API_URL:https://sandbox.vnpayment.vn/merchant_webapi/api/transaction}
+
+# ===========================================
+# AUTHENTICATION & SECURITY
+# ===========================================
+jwt:
+  secret: ${JWT_SECRET:MyVeryLongSecretKeyForJWTTokenGeneration256BitsMinimumRequiredForHS256Algorithm}
+  expiration: ${JWT_EXPIRATION:86400000}
+
+oauth2:
+  google:
+    client-id: ${GOOGLE_CLIENT_ID:}
+    client-secret: ${GOOGLE_CLIENT_SECRET:}
+
+# ===========================================
+# NOTIFICATION SERVICES
+# ===========================================
+sms:
+  provider: ${SMS_PROVIDER:stub}
+  twilio:
+    accountSid: ${TWILIO_ACCOUNT_SID:}
+    authToken: ${TWILIO_AUTH_TOKEN:}
+    fromNumber: ${TWILIO_FROM_NUMBER:}
+
+# ===========================================
+# EXTERNAL SERVICES
+# ===========================================
+python:
+  reco:
+    url: ${PYTHON_RECO_URL:http://localhost:8000}
+
+ghn:
+  api:
+    token: ${GHN_API_TOKEN:}
+    base-url: ${GHN_API_BASE_URL:https://online-gateway.ghn.vn/shiip/public-api/v2}
+  mock-create-order: true
+
+# ===========================================
+# CORS CONFIGURATION
+# ===========================================
+cors:
+  allowed:
+    origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,https://your-domain.com}
+    methods: ${CORS_ALLOWED_METHODS:GET,POST,PUT,DELETE,OPTIONS,PATCH}
+    headers: ${CORS_ALLOWED_HEADERS:*}
+  allow:
+    credentials: ${CORS_ALLOW_CREDENTIALS:true}
+  max:
+    age: ${CORS_MAX_AGE:3600}
+
+# ===========================================
+# FRONTEND CONFIGURATION
+# ===========================================
+frontend:
+  base:
+    url: ${FRONTEND_BASE_URL:http://localhost:3000}
+  payment:
+    result:
+      path: ${FRONTEND_PAYMENT_RESULT_PATH:/payment-result}
+
+# ===========================================
+# SERVICE DISCOVERY
+# ===========================================
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+# ===========================================
+# CHATBOT CONFIGURATION
+# ===========================================
+chatbot:
+  ai:
+    intent:
+      enabled: ${CHATBOT_AI_INTENT_ENABLED:false}
+    entities:
+      enabled: ${CHATBOT_AI_ENTITIES_ENABLED:false}
+    confidence:
+      enabled: ${CHATBOT_AI_CONFIDENCE_ENABLED:false}
+    title:
+      enabled: ${CHATBOT_AI_TITLE_ENABLED:false}
+  max:
+    conversation:
+      history: 10
+  response:
+    timeout: 30000
+  personality: friendly,helpful,professional
+
+# ===========================================
+# INVENTORY MANAGEMENT
+# ===========================================
+inventory:
+  low:
+    stock:
+      threshold: ${INVENTORY_LOW_STOCK_THRESHOLD:10}
+  forecast:
+    days: ${INVENTORY_FORECAST_DAYS:30}
+  alert:
+    enabled: ${INVENTORY_ALERT_ENABLED:true}
+
+# ===========================================
+# RECOMMENDATION SYSTEM
+# ===========================================
+recommendation:
+  vector:
+    similarity:
+      threshold: ${RECOMMENDATION_VECTOR_SIMILARITY_THRESHOLD:0.8}
+  max:
+    results: ${RECOMMENDATION_MAX_RESULTS:10}
+  update:
+    interval: ${RECOMMENDATION_UPDATE_INTERVAL:3600000}
+
+# ===========================================
+# SERVICE COMMUNICATION
+# ===========================================
+services:
+  order:
+    base-url: ${ORDER_SERVICE_BASE_URL:http://localhost:8084}
+  user:
+    base-url: ${USER_SERVICE_BASE_URL:http://localhost:8082}
+  product:
+    base-url: ${PRODUCT_SERVICE_BASE_URL:http://localhost:8083}
+  payment:
+    base-url: ${PAYMENT_SERVICE_BASE_URL:http://localhost:8085}
+  notification:
+    base-url: ${NOTIFICATION_SERVICE_BASE_URL:http://localhost:8086}
+  ai:
+    base-url: ${AI_SERVICE_BASE_URL:http://localhost:8088}
+  admin:
+    base-url: ${ADMIN_SERVICE_BASE_URL:http://localhost:8087}
+  category:
+    base-url: ${CATEGORY_SERVICE_BASE_URL:http://localhost:8089}
+  brand:
+    base-url: ${BRAND_SERVICE_BASE_URL:http://localhost:8090}
+  cart:
+    base-url: ${CART_SERVICE_BASE_URL:http://localhost:8091}
+  voucher:
+    base-url: ${VOUCHER_SERVICE_BASE_URL:http://localhost:8092}
+  inventory:
+    base-url: ${INVENTORY_SERVICE_BASE_URL:http://localhost:8093}
+  recommendation:
+    base-url: ${RECOMMENDATION_SERVICE_BASE_URL:http://localhost:8094}
+  review:
+    base-url: ${REVIEW_SERVICE_BASE_URL:http://localhost:8095}
+  warranty:
+    base-url: ${WARRANTY_SERVICE_BASE_URL:http://localhost:8097}
+  favorites:
+    base-url: ${FAVORITES_SERVICE_BASE_URL:http://localhost:8096}
+
+# ===========================================
+# MANAGEMENT & MONITORING
+# ===========================================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    enable:
+      hikaricp: true
+  health:
+    db:
+      enabled: true
+    datasource:
+      enabled: true
+    rabbit:
+      enabled: false
+    mail:
+      enabled: false
+    elasticsearch:
+    
+      enabled: false
+
+# ===========================================
+# LOGGING CONFIGURATION
+# ===========================================
+logging:
+  level:
+    com.example: DEBUG
+    org.springframework.ai: DEBUG
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# ===========================================
+# API DOCUMENTATION
+# ===========================================
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method

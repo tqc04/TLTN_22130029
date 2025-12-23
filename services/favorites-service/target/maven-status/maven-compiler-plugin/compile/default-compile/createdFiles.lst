@@ -1,0 +1,6 @@
+com\example\favorites\service\FavoritesService.class
+com\example\favorites\FavoritesServiceApplication.class
+com\example\favorites\controller\FavoritesController.class
+com\example\favorites\repository\FavoritesRepository.class
+com\example\favorites\entity\Favorite.class
+com\example\favorites\config\SecurityConfig.class

@@ -1,0 +1,14 @@
+package com.example.ai.entity;
+
+public enum AIRequestType {
+    CHAT,
+    PRODUCT_DESCRIPTION,
+    PRODUCT_RECOMMENDATION,
+    SEARCH_QUERY,
+    TRANSLATION,
+    SUMMARIZATION,
+    SENTIMENT_ANALYSIS,
+    IMAGE_GENERATION,
+    IMAGE_ANALYSIS,
+    CUSTOM
+}

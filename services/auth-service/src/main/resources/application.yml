@@ -1,0 +1,100 @@
+﻿server:
+  port: 8081
+
+spring:
+  application:
+    name: auth-service
+  cloud:
+    config:
+      uri: http://localhost:8888
+  config:
+    import: optional:configserver:http://localhost:8888
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/auth_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh&characterEncoding=UTF-8&useUnicode=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+
+  flyway:
+    enabled: false
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:dummy-client-id}
+            client-secret: ${GOOGLE_CLIENT_SECRET:dummy-client-secret}
+            redirect-uri: "http://localhost:8081/login/oauth2/code/google"
+            scope: openid,profile,email
+            authorization-grant-type: authorization_code
+            client-name: Google
+          facebook:
+            client-id: ${FACEBOOK_APP_ID:dummy-facebook-app-id}
+            client-secret: ${FACEBOOK_APP_SECRET:dummy-facebook-secret}
+            redirect-uri: "http://localhost:8081/login/oauth2/code/facebook"
+            scope: email,public_profile
+            authorization-grant-type: authorization_code
+            client-name: Facebook
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
+            user-name-attribute: sub
+          facebook:
+            authorization-uri: https://www.facebook.com/v12.0/dialog/oauth
+            token-uri: https://graph.facebook.com/v12.0/oauth/access_token
+            user-info-uri: https://graph.facebook.com/v12.0/me?fields=id,name,email,picture
+            user-name-attribute: id
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:MyVeryLongSecretKeyForJWTTokenGeneration256BitsMinimumRequiredForHS256Algorithm}
+    ttlMillis: ${JWT_EXPIRATION:86400000}
+
+# Rate limiting configuration
+rate:
+  limit:
+    login:
+      requests: ${RATE_LIMIT_LOGIN_REQUESTS:5}  # Number of login attempts allowed
+      duration: ${RATE_LIMIT_LOGIN_DURATION:60}  # Time window in seconds (default: 5 requests per 60 seconds)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+
+
+

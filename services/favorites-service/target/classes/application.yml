@@ -1,0 +1,49 @@
+server:
+  port: 8096
+
+spring:
+  application:
+    name: favorites-service
+  # TẮT Spring Cloud Config, chỉ dùng cấu hình local trong file này
+  cloud:
+    config:
+      enabled: false
+      import-check:
+        enabled: false
+    discovery:
+      enabled: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/favorites_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh&characterEncoding=UTF-8&useUnicode=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+services:
+  product:
+    base-url: ${PRODUCT_SERVICE_BASE_URL:http://localhost:8083}
+  user:
+    base-url: ${USER_SERVICE_BASE_URL:http://localhost:8082}
+

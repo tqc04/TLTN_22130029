@@ -1,0 +1,12 @@
+com\example\user\entity\UserRole.class
+com\example\user\config\SecurityBeans.class
+com\example\user\config\SecurityConfig.class
+com\example\user\service\UserService.class
+com\example\user\UserServiceApplication.class
+com\example\user\entity\User.class
+com\example\user\repository\UserRepository.class
+com\example\user\config\MethodSecurityConfig.class
+com\example\user\service\UserService$1.class
+com\example\user\controller\StaticResourceController.class
+com\example\user\controller\UserController.class
+com\example\user\service\PasswordResetService.class

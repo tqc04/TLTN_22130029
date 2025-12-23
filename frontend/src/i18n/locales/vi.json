@@ -1,0 +1,292 @@
+{
+  "common": {
+    "search": "search",
+    "login": "Đăng nhập",
+    "logout": "Đăng xuất",
+    "register": "Đăng ký",
+    "profile": "Hồ sơ",
+    "settings": "Cài đặt",
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "loading": "Đang tải...",
+    "error": "Lỗi",
+    "success": "Thành công",
+    "warning": "Cảnh báo",
+    "info": "Thông tin",
+    "brandName": "TechHub",
+    "compare": "So sánh",
+    "favorites": "Yêu thích",
+    "admin": "Quản trị viên",
+    "orders": "Đơn hàng",
+    "wishlist": "Danh sách yêu thích",
+    "reviews": "Đánh giá",
+    "support": "Hỗ trợ",
+    "writeReview": "Viết đánh giá",
+    "helpful": "Hữu ích",
+    "notHelpful": "Không hữu ích",
+    "totalReviews": "Tổng số đánh giá",
+    "averageRating": "Điểm đánh giá trung bình",
+    "verifiedPurchase": "Đã mua hàng xác thực",
+    "pros": "Ưu điểm",
+    "cons": "Nhược điểm",
+    "loginRequired": "Vui lòng đăng nhập để xem và viết đánh giá",
+    "noReviews": "Chưa có đánh giá nào",
+    "reviewContent": "Nội dung đánh giá",
+    "reviewTitle": "Tiêu đề đánh giá",
+    "submitReview": "Gửi đánh giá"
+  },
+  "navigation": {
+    "home": "Trang chủ",
+    "products": "Sản phẩm",
+    "categories": "Danh mục",
+    "cart": "Giỏ hàng",
+    "orders": "Đơn hàng",
+    "wishlist": "Danh sách yêu thích",
+    "support": "Hỗ trợ",
+    "aiAssistant": "Trợ lý AI",
+    "reviews": "Đánh giá",
+    "favorites": "Yêu thích",
+    "compare": "So sánh",
+    "admin": "Quản trị viên",
+    "profile": "Hồ sơ"
+  },
+  "auth": {
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "forgotPassword": "Quên mật khẩu?",
+    "rememberMe": "Ghi nhớ đăng nhập",
+    "loginWithGoogle": "Đăng nhập với Google",
+    "noAccount": "Chưa có tài khoản?",
+    "hasAccount": "Đã có tài khoản?",
+    "signUp": "Tạo tài khoản",
+    "signIn": "Đăng nhập"
+  },
+  "profile": {
+    "title": "Hồ sơ",
+    "personalInfo": "Thông tin cá nhân",
+    "security": "Bảo mật",
+    "preferences": "Tùy chọn",
+    "notifications": "Thông báo",
+    "firstName": "Tên",
+    "lastName": "Họ",
+    "phoneNumber": "Số điện thoại",
+    "address": "Địa chỉ",
+    "dateOfBirth": "Ngày sinh",
+    "avatar": "Ảnh đại diện",
+    "changePassword": "Đổi mật khẩu",
+    "currentPassword": "Mật khẩu hiện tại",
+    "newPassword": "Mật khẩu mới",
+    "confirmNewPassword": "Xác nhận mật khẩu mới",
+    "accountPreferences": "Tùy chọn tài khoản",
+    "enablePersonalization": "Bật cá nhân hóa",
+    "enablePersonalizationDesc": "Cho phép hệ thống điều chỉnh trải nghiệm dựa trên hành vi của bạn",
+    "enableAIAssistant": "Bật trợ lý AI",
+    "enableAIAssistantDesc": "Cho phép truy cập chatbot trợ lý AI",
+    "enableRecommendations": "Bật gợi ý",
+    "enableRecommendationsDesc": "Nhận gợi ý sản phẩm cá nhân hóa",
+    "notificationSettings": "Cài đặt thông báo",
+    "emailNotifications": "Thông báo qua email",
+    "emailNotificationsDesc": "Nhận cập nhật đơn hàng và email khuyến mãi",
+    "pushNotifications": "Thông báo đẩy",
+    "pushNotificationsDesc": "Nhận thông báo đẩy trên trình duyệt cho các cập nhật quan trọng",
+    "savePreferences": "Lưu tùy chọn",
+    "saveSettings": "Lưu cài đặt",
+    "profileUpdated": "Cập nhật hồ sơ thành công!",
+    "passwordChanged": "Đổi mật khẩu thành công!",
+    "preferencesUpdated": "Cập nhật tùy chọn thành công!",
+    "notificationsUpdated": "Cập nhật cài đặt thông báo thành công!"
+  },
+  "products": {
+    "title": "Sản phẩm",
+    "searchProducts": "Tìm kiếm sản phẩm...",
+    "filterByCategory": "Lọc theo danh mục",
+    "sortBy": "Sắp xếp theo",
+    "price": "Giá",
+    "addToCart": "Thêm vào giỏ",
+    "addToWishlist": "Thêm vào yêu thích",
+    "removeFromWishlist": "Xóa khỏi yêu thích",
+    "outOfStock": "Hết hàng",
+    "inStock": "Còn hàng",
+    "quantity": "Số lượng",
+    "description": "Mô tả",
+    "specifications": "Thông số kỹ thuật",
+    "reviews": "Đánh giá",
+    "relatedProducts": "Sản phẩm liên quan"
+  },
+  "productsPage": {
+    "title": "Sản phẩm của chúng tôi",
+    "subtitle": "Khám phá bộ sưu tập sản phẩm ấn tượng",
+    "searchPlaceholder": "Tìm kiếm sản phẩm...",
+    "category": "Danh mục",
+    "brand": "Thương hiệu",
+    "sortBy": "Sắp xếp",
+    "allCategories": "Tất cả danh mục",
+    "allBrands": "Tất cả thương hiệu",
+    "clearFilters": "Xóa bộ lọc",
+    "loading": "Đang tải sản phẩm...",
+    "resultsFound": "{{count}} sản phẩm được tìm thấy",
+    "totalProducts": "{{count}} tổng số sản phẩm",
+    "noResultsTitle": "Không tìm thấy sản phẩm",
+    "noResultsSubtitle": "Hãy thử thay đổi từ khóa hoặc bộ lọc tìm kiếm",
+    "clearAll": "Xóa tất cả bộ lọc",
+    "sortOptions": {
+      "featured": "Nổi bật",
+      "priceAsc": "Giá: Thấp đến cao",
+      "priceDesc": "Giá: Cao đến thấp",
+      "nameAsc": "Tên: A đến Z",
+      "nameDesc": "Tên: Z đến A",
+      "newest": "Mới nhất"
+    }
+  },
+  "cart": {
+    "title": "Giỏ hàng",
+    "emptyCart": "Giỏ hàng của bạn đang trống",
+    "subtotal": "Tạm tính",
+    "tax": "Thuế",
+    "shipping": "Phí vận chuyển",
+    "total": "Tổng cộng",
+    "checkout": "Thanh toán",
+    "continueShopping": "Tiếp tục mua sắm",
+    "removeItem": "Xóa sản phẩm",
+    "updateQuantity": "Cập nhật số lượng",
+    "success": {
+      "addedToCart": "Đã thêm sản phẩm vào giỏ hàng!"
+    },
+    "errors": {
+      "addToCartFailed": "Không thể thêm sản phẩm vào giỏ hàng",
+      "outOfStock": "Sản phẩm đã hết hàng",
+      "exceedsStock": "Số lượng vượt quá tồn kho hiện có",
+      "productNotActive": "Sản phẩm không còn kinh doanh",
+      "productNotFound": "Không tìm thấy sản phẩm"
+    }
+  },
+  "checkout": {
+    "title": "Thanh toán",
+    "shippingAddress": "Địa chỉ giao hàng",
+    "billingAddress": "Địa chỉ thanh toán",
+    "paymentMethod": "Phương thức thanh toán",
+    "orderSummary": "Tóm tắt đơn hàng",
+    "placeOrder": "Đặt hàng",
+    "orderConfirmation": "Xác nhận đơn hàng",
+    "orderNumber": "Mã đơn hàng",
+    "estimatedDelivery": "Thời gian giao hàng dự kiến"
+  },
+  "categories": {
+    "allCategories": "Tất cả danh mục",
+    "viewAllProducts": "Xem tất cả sản phẩm",
+    "categories": "Danh mục",
+    "browseByCategory": "Duyệt theo danh mục",
+    "electronics": "Điện tử",
+    "gaming": "Gaming",
+    "computers": "Máy tính",
+    "mobile": "Điện thoại",
+    "audio": "Âm thanh",
+    "accessories": "Phụ kiện"
+  },
+  "wishlist": {
+    "title": "Danh sách yêu thích",
+    "empty": "Danh sách yêu thích đang trống",
+    "loginRequired": "Vui lòng đăng nhập để thêm sản phẩm vào danh sách yêu thích",
+    "errors": {
+      "addFailed": "Không thể thêm vào danh sách yêu thích",
+      "removeFailed": "Không thể xóa khỏi danh sách yêu thích"
+    },
+    "success": {
+      "added": "Đã thêm vào danh sách yêu thích!",
+      "removed": "Đã xóa khỏi danh sách yêu thích"
+    }
+  },
+  "home": {
+    "hero": {
+      "slide1": {
+        "title": "Khám phá công nghệ mới nhất",
+        "subtitle": "Sản phẩm công nghệ hàng đầu với giá tốt nhất",
+        "cta": "Mua ngay"
+      },
+      "slide2": {
+        "title": "Flash Sale - Giảm giá sốc",
+        "subtitle": "Ưu đãi đặc biệt chỉ trong thời gian giới hạn",
+        "cta": "Khám phá"
+      },
+      "slide3": {
+        "title": "Sản phẩm mới ra mắt",
+        "subtitle": "Cập nhật những mẫu mới nhất từ các thương hiệu hàng đầu",
+        "cta": "Xem ngay"
+      }
+    },
+    "features": {
+      "newest": {
+        "title": "Hàng mới ra mắt",
+        "subtitle": "Những sản phẩm mới nhất từ các thương hiệu hàng đầu"
+      },
+      "bestselling": {
+        "title": "Bán chạy nhất",
+        "subtitle": "Top sản phẩm được yêu thích nhất"
+      },
+      "specialOffers": {
+        "title": "Khuyến mãi đặc biệt",
+        "subtitle": "Ưu đãi hấp dẫn không thể bỏ qua"
+      }
+    },
+    "news": {
+      "title": "Tin tức nổi bật",
+      "subtitle": "Cập nhật xu hướng công nghệ và sản phẩm mới",
+      "readMore": "Xem thêm"
+    },
+    "whyChoose": {
+      "title": "Vì sao chọn TechHub?",
+      "subtitle": "Chúng tôi cam kết mang đến trải nghiệm mua sắm tốt nhất",
+      "freeShipping": {
+        "title": "Giao hàng miễn phí",
+        "description": "Miễn phí toàn quốc cho đơn hàng từ 500.000đ"
+      },
+      "warranty": {
+        "title": "Bảo hành chính hãng",
+        "description": "Tất cả sản phẩm đều bảo hành chính hãng"
+      },
+      "support": {
+        "title": "Hỗ trợ 24/7",
+        "description": "Đội ngũ hỗ trợ khách hàng chuyên nghiệp"
+      },
+      "quality": {
+        "title": "Chất lượng đảm bảo",
+        "description": "Cam kết 100% sản phẩm chính hãng"
+      }
+    },
+    "testimonials": {
+      "title": "Khách hàng nói gì về chúng tôi?",
+      "subtitle": "Hàng nghìn khách hàng đã tin tưởng và lựa chọn TechHub"
+    },
+    "cta": {
+      "title": "Sẵn sàng mua sắm?",
+      "subtitle": "Tham gia cùng hàng nghìn khách hàng hài lòng và khám phá sản phẩm tuyệt vời",
+      "browseProducts": "Duyệt sản phẩm",
+      "createAccount": "Tạo tài khoản"
+    },
+    "recommendations": {
+      "title": "Gợi ý cho bạn",
+      "subtitle": "Sản phẩm được đề xuất dựa trên sở thích của bạn",
+      "viewAll": "Xem tất cả",
+      "loginRequired": "Đăng nhập để nhận gợi ý cá nhân hóa."
+    },
+    "flashSale": {
+      "title": "Flash Sale",
+      "timeUp": "Kết thúc sau",
+      "soldOut": "đã bán"
+    }
+  },
+  "language": {
+    "title": "Ngôn ngữ",
+    "english": "Tiếng Anh",
+    "vietnamese": "Tiếng Việt",
+    "chinese": "Tiếng Trung",
+    "japanese": "Tiếng Nhật",
+    "korean": "Tiếng Hàn",
+    "changeLanguage": "Thay đổi ngôn ngữ"
+  }
+} 

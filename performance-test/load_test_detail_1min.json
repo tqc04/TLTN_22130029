@@ -1,0 +1,18 @@
+{
+  "load_detail": [
+    {
+      "minute": 1,
+      "stats": {
+        "total_requests": 2338,
+        "successful_requests": 2338,
+        "failed_requests": 0,
+        "error_rate": 0.0,
+        "avg_ms": 8.041327483027892,
+        "min_ms": 3.169536590576172,
+        "max_ms": 1011.5447044372559,
+        "throughput": 38.97
+      },
+      "timestamp": "2025-12-11T09:06:45.831115"
+    }
+  ]
+}

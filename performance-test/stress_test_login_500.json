@@ -1,0 +1,15 @@
+{
+  "stress_login": {
+    "stats": {
+      "total_requests": 500,
+      "successful_requests": 500,
+      "failed_requests": 0,
+      "error_rate": 0.0,
+      "avg_ms": 2154.7239866256714,
+      "min_ms": 792.1440601348877,
+      "max_ms": 4009.5624923706055,
+      "throughput": 22.57
+    },
+    "timestamp": "2025-12-12T12:11:02.631258"
+  }
+}

@@ -1,0 +1,129 @@
+﻿server:
+  port: 8084
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: order-service
+  cloud:
+    config:
+      uri: http://localhost:8888
+  config:
+    import: optional:configserver:http://localhost:8888
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/order_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh&characterEncoding=UTF-8&useUnicode=true&autoReconnect=true&useServerPrepStmts=true&cachePrepStmts=true&useLocalSessionState=true&useLocalTransactionState=true&alwaysSendSetIsolation=false&elideSetAutoCommits=true&serverTimezone=Asia/Ho_Chi_Minh
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
+    hikari:
+      maximum-pool-size: 25
+      minimum-idle: 5
+      connection-timeout: 10000
+      idle-timeout: 300000
+      max-lifetime: 1200000
+      pool-name: OrderServiceHikariPool
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        jdbc:
+          batch_size: 25
+          order_inserts: true
+          order_updates: true
+        connection:
+          provider_disables_autocommit: false
+        generate_statistics: false
+    show-sql: false
+    open-in-view: false
+
+  # Redis Cache Configuration
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000  # 1 hour default TTL
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+# Redis Connection (optional - fallback to in-memory cache)
+redis:
+  host: ${REDIS_HOST:localhost}
+  port: ${REDIS_PORT:6379}
+  password: ${REDIS_PASSWORD:}
+  timeout: 10000ms
+  jedis:
+    pool:
+      max-active: 20
+      max-idle: 10
+      min-idle: 2
+
+# Resilience4j Circuit Breaker Configuration
+resilience4j:
+  circuitbreaker:
+    instances:
+      inventory-service:
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30000
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+        register-health-indicator: true
+      payment-service:
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30000
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+        register-health-indicator: true
+  retry:
+    instances:
+      inventory-service:
+        max-attempts: 3
+        wait-duration: 2s
+        retry-exceptions:
+          - org.springframework.web.client.RestClientException
+          - java.net.ConnectException
+          - java.net.SocketTimeoutException
+      payment-service:
+        max-attempts: 3
+        wait-duration: 2s
+        retry-exceptions:
+          - org.springframework.web.client.RestClientException
+          - java.net.ConnectException
+          - java.net.SocketTimeoutException
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+
+# Service account for inter-service communication
+interservice:
+  username: service
+  password: service123
+
+# GHN Shipping API Configuration
+ghn:
+  api:
+    token: 9bed4ddd-64c1-11f0-8299-f6f77a32dfa4
+    shop-id:
+    base-url: https://online-gateway.ghn.vn/shiip/public-api/v2
+
+# Service URLs
+services:
+  notification:
+    base-url: ${NOTIFICATION_SERVICE_BASE_URL:http://localhost:8086}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+

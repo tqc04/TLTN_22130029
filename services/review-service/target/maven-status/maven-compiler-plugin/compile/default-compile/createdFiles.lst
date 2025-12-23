@@ -1,0 +1,6 @@
+com\example\review\controller\ReviewController.class
+com\example\review\entity\ProductReview.class
+com\example\review\repository\ReviewRepository.class
+com\example\review\ReviewServiceApplication.class
+com\example\review\service\ReviewService.class
+com\example\review\config\SecurityConfig.class

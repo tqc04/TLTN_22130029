@@ -1,0 +1,15 @@
+D:\Buildd24_10\Buildd30_7\Buildd43\services\ai-service\src\main\java\com\example\ai\AiServiceApplication.java
+D:\Buildd24_10\Buildd30_7\Buildd43\services\ai-service\src\main\java\com\example\ai\config\RestConfig.java
+D:\Buildd24_10\Buildd30_7\Buildd43\services\ai-service\src\main\java\com\example\ai\controller\AIController.java
+D:\Buildd24_10\Buildd30_7\Buildd43\services\ai-service\src\main\java\com\example\ai\entity\AIProvider.java
+D:\Buildd24_10\Buildd30_7\Buildd43\services\ai-service\src\main\java\com\example\ai\entity\AIRequest.java
+D:\Buildd24_10\Buildd30_7\Buildd43\services\ai-service\src\main\java\com\example\ai\entity\AIRequestType.java
+D:\Buildd24_10\Buildd30_7\Buildd43\services\ai-service\src\main\java\com\example\ai\entity\ChatLog.java
+D:\Buildd24_10\Buildd30_7\Buildd43\services\ai-service\src\main\java\com\example\ai\repository\AIRequestRepository.java
+D:\Buildd24_10\Buildd30_7\Buildd43\services\ai-service\src\main\java\com\example\ai\repository\ChatLogRepository.java
+D:\Buildd24_10\Buildd30_7\Buildd43\services\ai-service\src\main\java\com\example\ai\repository\ProductRepository.java
+D:\Buildd24_10\Buildd30_7\Buildd43\services\ai-service\src\main\java\com\example\ai\service\AIContentService.java
+D:\Buildd24_10\Buildd30_7\Buildd43\services\ai-service\src\main\java\com\example\ai\service\AIService.java
+D:\Buildd24_10\Buildd30_7\Buildd43\services\ai-service\src\main\java\com\example\ai\service\ChatbotService.java
+D:\Buildd24_10\Buildd30_7\Buildd43\services\ai-service\src\main\java\com\example\ai\service\GeminiService.java
+D:\Buildd24_10\Buildd30_7\Buildd43\services\ai-service\src\main\java\com\example\ai\service\SentimentAnalysisService.java

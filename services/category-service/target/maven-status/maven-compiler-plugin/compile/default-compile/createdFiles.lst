@@ -1,0 +1,5 @@
+com\example\category\controller\CategoryController.class
+com\example\category\CategoryServiceApplication.class
+com\example\category\service\CategoryService.class
+com\example\category\entity\Category.class
+com\example\category\repository\CategoryRepository.class

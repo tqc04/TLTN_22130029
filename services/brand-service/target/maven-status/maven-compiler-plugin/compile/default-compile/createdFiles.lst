@@ -1,0 +1,5 @@
+com\example\brand\controller\BrandController.class
+com\example\brand\entity\Brand.class
+com\example\brand\repository\BrandRepository.class
+com\example\brand\BrandServiceApplication.class
+com\example\brand\service\BrandService.class

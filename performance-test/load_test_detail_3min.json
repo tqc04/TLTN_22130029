@@ -1,0 +1,46 @@
+{
+  "load_detail": [
+    {
+      "minute": 1,
+      "stats": {
+        "total_requests": 2525,
+        "successful_requests": 2525,
+        "failed_requests": 0,
+        "error_rate": 0.0,
+        "avg_ms": 6.212054148758992,
+        "min_ms": 0.0,
+        "max_ms": 24.02806282043457,
+        "throughput": 42.08
+      },
+      "timestamp": "2025-12-11T09:07:46.430235"
+    },
+    {
+      "minute": 2,
+      "stats": {
+        "total_requests": 2486,
+        "successful_requests": 2486,
+        "failed_requests": 0,
+        "error_rate": 0.0,
+        "avg_ms": 6.606960622706149,
+        "min_ms": 0.0,
+        "max_ms": 29.590606689453125,
+        "throughput": 41.43
+      },
+      "timestamp": "2025-12-11T09:08:46.441836"
+    },
+    {
+      "minute": 3,
+      "stats": {
+        "total_requests": 2455,
+        "successful_requests": 2455,
+        "failed_requests": 0,
+        "error_rate": 0.0,
+        "avg_ms": 6.873259476391701,
+        "min_ms": 0.0,
+        "max_ms": 17.88473129272461,
+        "throughput": 40.93
+      },
+      "timestamp": "2025-12-11T09:09:46.451337"
+    }
+  ]
+}

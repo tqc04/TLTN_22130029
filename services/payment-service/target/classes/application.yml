@@ -1,0 +1,142 @@
+﻿server:
+  port: 8085
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: payment-service
+
+  cloud:
+    config:
+      uri: http://localhost:8888
+
+  config:
+    import: optional:configserver:http://localhost:8888
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/payment_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh&characterEncoding=UTF-8&useUnicode=true&autoReconnect=true&useServerPrepStmts=true&cachePrepStmts=true&useLocalSessionState=true&useLocalTransactionState=true&alwaysSendSetIsolation=false&elideSetAutoCommits=true&serverTimezone=Asia/Ho_Chi_Minh
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 10000
+      idle-timeout: 300000
+      max-lifetime: 1200000
+      pool-name: PaymentServiceHikariPool
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        jdbc:
+          batch_size: 25
+          order_inserts: true
+          order_updates: true
+        connection:
+          provider_disables_autocommit: false
+        generate_statistics: false
+    show-sql: false
+    open-in-view: false
+
+  # Redis Cache Configuration
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000  # 1 hour default TTL
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+# Redis Connection (optional - fallback to in-memory cache)
+redis:
+  host: ${REDIS_HOST:localhost}
+  port: ${REDIS_PORT:6379}
+  password: ${REDIS_PASSWORD:}
+  timeout: 10000ms
+  jedis:
+    pool:
+      max-active: 20
+      max-idle: 10
+      min-idle: 2
+
+# Resilience4j Circuit Breaker Configuration
+resilience4j:
+  circuitbreaker:
+    instances:
+      order-service:
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30000
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+        register-health-indicator: true
+      inventory-service:
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30000
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+        register-health-indicator: true
+  retry:
+    instances:
+      order-service:
+        max-attempts: 3
+        wait-duration: 2s
+        retry-exceptions:
+          - org.springframework.web.client.RestClientException
+          - java.net.ConnectException
+          - java.net.SocketTimeoutException
+      inventory-service:
+        max-attempts: 3
+        wait-duration: 2s
+        retry-exceptions:
+          - org.springframework.web.client.RestClientException
+          - java.net.ConnectException
+          - java.net.SocketTimeoutException
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+
+vnpay:
+  merchant:
+    id: ${VNPAY_MERCHANT_ID:NPUM8AWO}
+  secret:
+    key: ${VNPAY_SECRET_KEY:Q5F2P6EW78J3JSULSF7A5VSKSJD3IWBN}
+  return:
+    url: ${VNPAY_RETURN_URL:http://localhost:8085/api/payments/vnpay/return}
+  payment:
+    url: ${VNPAY_PAYMENT_URL:https://sandbox.vnpayment.vn/paymentv2/vpcpay.html}
+  hash:
+    type: ${VNPAY_HASH_TYPE:SHA512}  # SHA512 is required by VNPay (SHA256 for testing only)
+
+# Service account for inter-service communication
+interservice:
+  username: service
+  password: service123
+
+stripe:
+  api:
+    key: ${STRIPE_API_KEY:}
+  webhook:
+    secret: ${STRIPE_WEBHOOK_SECRET:}
+
+services:
+  order:
+    base-url: ${ORDER_SERVICE_BASE_URL:http://localhost:8084}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+

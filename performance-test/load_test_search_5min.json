@@ -1,0 +1,74 @@
+{
+  "load_search": [
+    {
+      "minute": 1,
+      "stats": {
+        "total_requests": 1901,
+        "successful_requests": 1901,
+        "failed_requests": 0,
+        "error_rate": 0.0,
+        "avg_ms": 31.537558266139545,
+        "min_ms": 17.02094078063965,
+        "max_ms": 246.88172340393066,
+        "throughput": 31.68
+      },
+      "timestamp": "2025-12-11T09:01:23.663165"
+    },
+    {
+      "minute": 2,
+      "stats": {
+        "total_requests": 2357,
+        "successful_requests": 2357,
+        "failed_requests": 0,
+        "error_rate": 0.0,
+        "avg_ms": 25.432946877202394,
+        "min_ms": 16.774892807006836,
+        "max_ms": 111.80233955383301,
+        "throughput": 39.28
+      },
+      "timestamp": "2025-12-11T09:02:23.670681"
+    },
+    {
+      "minute": 3,
+      "stats": {
+        "total_requests": 2286,
+        "successful_requests": 2286,
+        "failed_requests": 0,
+        "error_rate": 0.0,
+        "avg_ms": 26.208283185750272,
+        "min_ms": 10.810136795043945,
+        "max_ms": 149.51133728027344,
+        "throughput": 38.11
+      },
+      "timestamp": "2025-12-11T09:03:23.672402"
+    },
+    {
+      "minute": 4,
+      "stats": {
+        "total_requests": 2190,
+        "successful_requests": 2190,
+        "failed_requests": 0,
+        "error_rate": 0.0,
+        "avg_ms": 27.37700155336563,
+        "min_ms": 13.6260986328125,
+        "max_ms": 233.9005470275879,
+        "throughput": 36.49
+      },
+      "timestamp": "2025-12-11T09:04:23.664756"
+    },
+    {
+      "minute": 5,
+      "stats": {
+        "total_requests": 2240,
+        "successful_requests": 2240,
+        "failed_requests": 0,
+        "error_rate": 0.0,
+        "avg_ms": 26.752819227320806,
+        "min_ms": 12.930870056152344,
+        "max_ms": 182.6469898223877,
+        "throughput": 37.34
+      },
+      "timestamp": "2025-12-11T09:05:23.684587"
+    }
+  ]
+}

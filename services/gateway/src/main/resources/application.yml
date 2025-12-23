@@ -1,0 +1,207 @@
+server:
+  port: 8080
+  tomcat:
+    max-http-post-size: 100MB
+    max-swallow-size: 100MB
+
+spring:
+  application:
+    name: gateway
+
+  config:
+    import: optional:configserver:http://localhost:8888
+
+  cloud:
+    config:
+      uri: http://localhost:8888
+
+    discovery:
+      locator:
+        enabled: true
+
+    gateway:
+      default-filters:
+        - RemoveRequestHeader=Cookie
+      routes:
+        # Auth Service
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**, /oauth2/**, /login/oauth2/**
+        
+        # User Service
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - RewritePath=/api/users/(?<segment>.*), /api/users/${segment}
+        
+        # User Service - Static Resources (uploads/avatars)
+        - id: user-service-uploads
+          uri: lb://user-service
+          predicates:
+            - Path=/api/uploads/**
+          filters:
+            - RewritePath=/api/uploads/(?<segment>.*), /api/uploads/${segment}
+        
+        # Product Service
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/products/**
+        
+        # Category Service
+        - id: category-service
+          uri: lb://category-service
+          predicates:
+            - Path=/api/categories/**
+        
+        # Brand Service
+        - id: brand-service
+          uri: lb://brand-service
+          predicates:
+            - Path=/api/brands/**
+        
+        # Cart Service
+        - id: cart-service
+          uri: lb://cart-service
+          predicates:
+            - Path=/api/cart/**
+        
+        # Order Service
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/orders/**
+        
+        # Shipping Service (Order Service)
+        - id: shipping-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/shipping/**
+        
+        # Payment Service
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/payments/**
+        
+        # Notification Service
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/notifications/**, /api/support/**, /ws/**
+        
+        # WebSocket Service (separate route for better handling)
+        - id: websocket-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/ws
+        
+        # AI Service
+        - id: ai-service
+          uri: lb://ai-service
+          predicates:
+            - Path=/api/ai/**
+        
+        # AI Chatbot (alias to AI Service)
+        - id: ai-chatbot-alias
+          uri: lb://ai-service
+          predicates:
+            - Path=/api/chatbot/**
+          filters:
+            - RewritePath=/api/chatbot/(?<segment>.*), /api/ai/chat/${segment}
+        
+        # Admin product images endpoints (must be BEFORE product-admin route to match first)
+        # Use * pattern to match UUID product IDs like af754a0a-a9f6-4048-a13f-f244fbd42f88
+        - id: admin-product-images
+          uri: lb://admin-service
+          predicates:
+            - Path=/api/admin/products/*/images, /api/admin/products/*/images/**
+
+        # Admin endpoints that belong to product-service
+        - id: product-admin
+          uri: lb://product-service
+          predicates:
+            - Path=/api/admin/products/**
+
+        # Admin endpoints that belong to warranty-service
+        - id: warranty-admin
+          uri: lb://warranty-service
+          predicates:
+            - Path=/api/admin/warranty/**
+
+        # Catch-all Admin Service (place AFTER specific admin routes)
+        - id: admin-service
+          uri: lb://admin-service
+          predicates:
+            - Path=/api/admin/**
+        
+        # Voucher Service
+        - id: voucher-service
+          uri: lb://voucher-service
+          predicates:
+            - Path=/api/vouchers/**
+        
+        # Inventory Service
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/api/inventory/**
+        
+        # Recommendation Service
+        - id: recommendation-service
+          uri: lb://recommendation-service
+          predicates:
+            - Path=/api/recommendations/**
+        
+        # Review Service
+        - id: review-service
+          uri: lb://review-service
+          predicates:
+            - Path=/api/reviews/**
+        
+        # Favorites Service
+        - id: favorites-service
+          uri: lb://favorites-service
+          predicates:
+            - Path=/api/favorites/**
+
+        # Warranty Service
+        - id: warranty-service
+          uri: lb://warranty-service
+          predicates:
+            - Path=/api/warranty/**
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+      enabled: true
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    registry-fetch-interval-seconds: 5
+    instance-info-replication-interval-seconds: 5
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+
+# JWT Secret configuration (must match auth-service)
+security:
+  jwt:
+    secret: ${JWT_SECRET:CHANGE_THIS_TO_A_VERY_LONG_RANDOM_SECRET_KEY_AT_LEAST_256_BITS}
+
+# Timeout configuration for gateway routes
+ribbon:
+  ConnectTimeout: 30000
+  ReadTimeout: 30000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway

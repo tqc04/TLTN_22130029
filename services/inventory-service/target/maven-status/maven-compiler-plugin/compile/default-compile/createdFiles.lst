@@ -1,0 +1,7 @@
+com\example\inventory\service\InventoryService$InventoryStatus.class
+com\example\inventory\repository\InventoryItemRepository.class
+com\example\inventory\service\InventoryService.class
+com\example\inventory\dto\InventoryItemDTO.class
+com\example\inventory\controller\InventoryController.class
+com\example\inventory\InventoryServiceApplication.class
+com\example\inventory\entity\InventoryItem.class

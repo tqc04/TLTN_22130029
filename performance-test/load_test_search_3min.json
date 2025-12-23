@@ -1,0 +1,46 @@
+{
+  "load_search": [
+    {
+      "minute": 1,
+      "stats": {
+        "total_requests": 2377,
+        "successful_requests": 2377,
+        "failed_requests": 0,
+        "error_rate": 0.0,
+        "avg_ms": 25.2308696069585,
+        "min_ms": 14.82081413269043,
+        "max_ms": 112.60986328125,
+        "throughput": 39.6
+      },
+      "timestamp": "2025-12-11T08:58:22.544732"
+    },
+    {
+      "minute": 2,
+      "stats": {
+        "total_requests": 2351,
+        "successful_requests": 2351,
+        "failed_requests": 0,
+        "error_rate": 0.0,
+        "avg_ms": 25.500051319117446,
+        "min_ms": 12.559175491333008,
+        "max_ms": 87.71538734436035,
+        "throughput": 39.18
+      },
+      "timestamp": "2025-12-11T08:59:22.565616"
+    },
+    {
+      "minute": 3,
+      "stats": {
+        "total_requests": 2145,
+        "successful_requests": 2145,
+        "failed_requests": 0,
+        "error_rate": 0.0,
+        "avg_ms": 27.935103547600878,
+        "min_ms": 16.302108764648438,
+        "max_ms": 315.0599002838135,
+        "throughput": 35.75
+      },
+      "timestamp": "2025-12-11T09:00:22.571263"
+    }
+  ]
+}

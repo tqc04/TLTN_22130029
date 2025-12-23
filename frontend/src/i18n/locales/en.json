@@ -1,0 +1,296 @@
+{
+  "common": {
+    "search": "Search",
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "profile": "Profile",
+    "settings": "Settings",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Information",
+    "brandName": "TechHub",
+    "compare": "Compare",
+    "favorites": "Favorites",
+    "admin": "Admin",
+    "orders": "Orders",
+    "wishlist": "Wishlist",
+    "reviews": "Reviews",
+    "support": "Support",
+    "writeReview": "Write Review",
+    "helpful": "Helpful",
+    "notHelpful": "Not Helpful",
+    "totalReviews": "Total Reviews",
+    "averageRating": "Average Rating",
+    "verifiedPurchase": "Verified Purchase",
+    "pros": "Pros",
+    "cons": "Cons",
+    "loginRequired": "Please log in to view and write reviews",
+    "noReviews": "No reviews yet",
+    "reviewContent": "Review Content",
+    "reviewTitle": "Review Title",
+    "submitReview": "Submit Review",
+    "cancel": "Cancel"
+  },
+  "navigation": {
+    "home": "Home",
+    "products": "Products",
+    "categories": "Categories",
+    "cart": "Shopping Cart",
+    "orders": "Orders",
+    "wishlist": "Wishlist",
+    "support": "Support",
+    "aiAssistant": "AI Assistant",
+    "reviews": "Reviews",
+    "favorites": "Favorites",
+    "compare": "Compare",
+    "admin": "Admin",
+    "profile": "Profile"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "rememberMe": "Remember me",
+    "loginWithGoogle": "Login with Google",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "signUp": "Sign Up",
+    "signIn": "Sign In"
+  },
+  "profile": {
+    "title": "Profile",
+    "personalInfo": "Personal Information",
+    "security": "Security",
+    "preferences": "Preferences",
+    "notifications": "Notifications",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phoneNumber": "Phone Number",
+    "address": "Address",
+    "dateOfBirth": "Date of Birth",
+    "avatar": "Profile Picture",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "accountPreferences": "Account Preferences",
+    "enablePersonalization": "Enable Personalization",
+    "enablePersonalizationDesc": "Allow the system to personalize your experience based on your behavior",
+    "enableAIAssistant": "Enable AI Assistant",
+    "enableAIAssistantDesc": "Allow access to the AI-powered chatbot assistant",
+    "enableRecommendations": "Enable Recommendations",
+    "enableRecommendationsDesc": "Receive personalized product recommendations",
+    "notificationSettings": "Notification Settings",
+    "emailNotifications": "Email Notifications",
+    "emailNotificationsDesc": "Receive order updates and promotional emails",
+    "pushNotifications": "Push Notifications",
+    "pushNotificationsDesc": "Receive browser push notifications for important updates",
+    "savePreferences": "Save Preferences",
+    "saveSettings": "Save Settings",
+    "profileUpdated": "Profile updated successfully!",
+    "passwordChanged": "Password changed successfully!",
+    "preferencesUpdated": "Preferences updated successfully!",
+    "notificationsUpdated": "Notification settings updated successfully!"
+  },
+  "products": {
+    "title": "Products",
+    "searchProducts": "Search products...",
+    "filterByCategory": "Filter by category",
+    "sortBy": "Sort by",
+    "price": "Price",
+    "addToCart": "Add to Cart",
+    "addToWishlist": "Add to Wishlist",
+    "removeFromWishlist": "Remove from Wishlist",
+    "outOfStock": "Out of Stock",
+    "inStock": "In Stock",
+    "quantity": "Quantity",
+    "description": "Description",
+    "specifications": "Specifications",
+    "reviews": "Reviews",
+    "relatedProducts": "Related Products"
+  },
+  "productsPage": {
+    "title": "Our Products",
+    "subtitle": "Discover our amazing collection of products",
+    "searchPlaceholder": "Search products...",
+    "category": "Category",
+    "brand": "Brand",
+    "sortBy": "Sort By",
+    "allCategories": "All Categories",
+    "allBrands": "All Brands",
+    "clearFilters": "Clear Filters",
+    "loading": "Loading products...",
+    "resultsFound": "{{count}} products found",
+    "totalProducts": "{{count}} total products",
+    "noResultsTitle": "No products found",
+    "noResultsSubtitle": "Try adjusting your search or filter criteria",
+    "clearAll": "Clear All Filters",
+    "sortOptions": {
+      "featured": "Featured",
+      "priceAsc": "Price: Low to High",
+      "priceDesc": "Price: High to Low",
+      "nameAsc": "Name: A to Z",
+      "nameDesc": "Name: Z to A",
+      "newest": "Newest"
+    }
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "emptyCart": "Your cart is empty",
+    "subtotal": "Subtotal",
+    "tax": "Tax",
+    "shipping": "Shipping",
+    "total": "Total",
+    "checkout": "Checkout",
+    "continueShopping": "Continue Shopping",
+    "removeItem": "Remove Item",
+    "updateQuantity": "Update Quantity",
+    "success": {
+      "addedToCart": "Added to cart successfully!"
+    },
+    "errors": {
+      "addToCartFailed": "Failed to add item to cart",
+      "outOfStock": "This product is out of stock",
+      "exceedsStock": "Quantity exceeds available stock",
+      "productNotActive": "This product is no longer active",
+      "productNotFound": "Product not found"
+    }
+  },
+  "checkout": {
+    "title": "Checkout",
+    "shippingAddress": "Shipping Address",
+    "billingAddress": "Billing Address",
+    "paymentMethod": "Payment Method",
+    "orderSummary": "Order Summary",
+    "placeOrder": "Place Order",
+    "orderConfirmation": "Order Confirmation",
+    "orderNumber": "Order Number",
+    "estimatedDelivery": "Estimated Delivery"
+  },
+  "categories": {
+    "allCategories": "All Categories",
+    "viewAllProducts": "View All Products",
+    "categories": "Categories",
+    "browseByCategory": "Browse by Category",
+    "electronics": "Electronics",
+    "gaming": "Gaming",
+    "computers": "Computers",
+    "mobile": "Mobile",
+    "audio": "Audio",
+    "accessories": "Accessories"
+  },
+  "wishlist": {
+    "title": "Wishlist",
+    "empty": "Your wishlist is empty",
+    "loginRequired": "Please log in to add products to your wishlist",
+    "errors": {
+      "addFailed": "Failed to add to wishlist",
+      "removeFailed": "Failed to remove from wishlist"
+    },
+    "success": {
+      "added": "Added to wishlist!",
+      "removed": "Removed from wishlist"
+    }
+  },
+  "home": {
+    "hero": {
+      "slide1": {
+        "title": "Discover Latest Technology",
+        "subtitle": "Top-tier tech products at the best prices",
+        "cta": "Shop Now"
+      },
+      "slide2": {
+        "title": "Flash Sale - Massive Discounts",
+        "subtitle": "Special offers for a limited time only",
+        "cta": "Explore"
+      },
+      "slide3": {
+        "title": "New Product Launches",
+        "subtitle": "Latest releases from leading brands",
+        "cta": "View Now"
+      }
+    },
+    "features": {
+      "newest": {
+        "title": "New Arrivals",
+        "subtitle": "Latest products from top brands"
+      },
+      "bestselling": {
+        "title": "Best Sellers",
+        "subtitle": "Top-rated products loved by customers"
+      },
+      "specialOffers": {
+        "title": "Special Offers",
+        "subtitle": "Irresistible deals you can't miss"
+      }
+    },
+    "news": {
+      "title": "Featured News",
+      "subtitle": "Stay updated with tech trends and new products",
+      "readMore": "Read More"
+    },
+    "whyChoose": {
+      "title": "Why Choose TechHub?",
+      "subtitle": "We are committed to providing the best shopping experience",
+      "freeShipping": {
+        "title": "Free Shipping",
+        "description": "Free nationwide delivery for orders over $50"
+      },
+      "warranty": {
+        "title": "Official Warranty",
+        "description": "All products come with official manufacturer warranty"
+      },
+      "support": {
+        "title": "24/7 Support",
+        "description": "Professional customer support team"
+      },
+      "quality": {
+        "title": "Quality Guaranteed",
+        "description": "100% authentic products guaranteed"
+      }
+    },
+    "testimonials": {
+      "title": "What Our Customers Say?",
+      "subtitle": "Thousands of customers trust and choose TechHub"
+    },
+    "cta": {
+      "title": "Ready to Start Shopping?",
+      "subtitle": "Join thousands of satisfied customers and discover amazing products",
+      "browseProducts": "Browse Products",
+      "createAccount": "Create Account"
+    },
+    "recommendations": {
+      "title": "Recommended for You",
+      "subtitle": "Products recommended based on your preferences",
+      "viewAll": "View All",
+      "loginRequired": "Log in to receive personalized recommendations."
+    },
+    "flashSale": {
+      "title": "Flash Sale",
+      "timeUp": "Ends in",
+      "soldOut": "sold"
+    }
+  },
+  "language": {
+    "title": "Language",
+    "english": "English",
+    "vietnamese": "Vietnamese",
+    "chinese": "Chinese",
+    "japanese": "Japanese",
+    "korean": "Korean",
+    "changeLanguage": "Change Language"
+  }
+}
+
+
+

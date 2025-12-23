@@ -1,0 +1,68 @@
+server:
+  port: 8087
+  tomcat:
+    max-http-post-size: 100MB
+    max-swallow-size: 100MB
+
+spring:
+  application:
+    name: admin-service
+  cloud:
+    config:
+      uri: http://localhost:8888
+  config:
+    import: optional:configserver:http://localhost:8888
+  datasource:
+    url: jdbc:mysql://localhost:3306/admin_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh&characterEncoding=UTF-8&useUnicode=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+  security:
+    user:
+      name: admin
+      password: admin123
+
+  # File Upload Configuration
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+      enabled: true
+      file-size-threshold: 2KB
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+
+# Service URLs
+services:
+  auth:
+    base-url: ${AUTH_SERVICE_BASE_URL:http://localhost:8081}
+  order:
+    base-url: ${ORDER_SERVICE_BASE_URL:http://localhost:8084}
+  user:
+    base-url: ${USER_SERVICE_BASE_URL:http://localhost:8082}
+  product:
+    base-url: ${PRODUCT_SERVICE_BASE_URL:http://localhost:8083}
+
+file:
+  upload:
+    # Write to a shared absolute folder so user-service can serve it
+    path: ${FILE_UPLOAD_PATH:D:/Buildd24_10/Buildd30_7/Buildd43/services/admin-service/uploads}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

@@ -1,0 +1,18 @@
+{
+  "load_login": [
+    {
+      "minute": 1,
+      "stats": {
+        "total_requests": 612,
+        "successful_requests": 0,
+        "failed_requests": 612,
+        "error_rate": 100.0,
+        "avg_ms": 47.05281156340456,
+        "min_ms": 3.7164688110351562,
+        "max_ms": 500.0646114349365,
+        "throughput": 10.19
+      },
+      "timestamp": "2025-12-12T11:55:59.133778"
+    }
+  ]
+}

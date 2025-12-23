@@ -1,0 +1,43 @@
+﻿server:
+  port: 8094
+
+spring:
+  application:
+    name: recommendation-service
+  cloud:
+    config:
+      uri: http://localhost:8888
+  config:
+    import: optional:configserver:http://localhost:8888
+  redis:
+    host: localhost
+    port: 6379
+    timeout: 2000ms
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+
+# Service URLs
+services:
+  product:
+    base-url: ${PRODUCT_SERVICE_BASE_URL:http://localhost:8083}
+  review:
+    base-url: ${REVIEW_SERVICE_BASE_URL:http://localhost:8095}
+
+# ML Service Configuration
+ml:
+  service:
+    base-url: ${ML_SERVICE_BASE_URL:http://localhost:8000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+

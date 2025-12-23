@@ -1,0 +1,17 @@
+{
+  "stress_search": {
+    "1000": {
+      "stats": {
+        "total_requests": 1000,
+        "successful_requests": 1000,
+        "failed_requests": 0,
+        "error_rate": 0.0,
+        "avg_ms": 648.6471600532532,
+        "min_ms": 59.69500541687012,
+        "max_ms": 1488.2593154907227,
+        "throughput": 145.46
+      },
+      "timestamp": "2025-12-11T08:56:49.819754"
+    }
+  }
+}

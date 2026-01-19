@@ -1,3 +1,4 @@
+com\example\recommendation\config\RedisConfig.class
 com\example\recommendation\controller\RecommendationController.class
 com\example\recommendation\RecommendationServiceApplication.class
 com\example\recommendation\dto\ProductRecommendation.class

@@ -223,9 +223,8 @@ def _predict_rating(user_id: str, product_id: str) -> Tuple[float, bool]:
                             score = max(1.0, min(5.0, score))
                             
                             if score > 0:
-                                return score, True  # AI model prediction successful
+                                return score, True  
                         except (ValueError, KeyError, IndexError):
-                            # Cold start: User or product not in training data
                             pass
                         except Exception as e:
                             import logging

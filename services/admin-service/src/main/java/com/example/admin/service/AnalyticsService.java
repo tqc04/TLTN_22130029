@@ -33,6 +33,9 @@ public class AnalyticsService {
     @Value("${services.inventory.base-url:http://localhost:8093}")
     private String inventoryServiceUrl;
     
+    @Value("${services.recommendation.base-url:http://localhost:8094}")
+    private String recommendationServiceUrl;
+    
     @Value("${interservice.username:service}")
     private String interServiceUsername;
     
@@ -656,6 +659,48 @@ public class AnalyticsService {
             logger.error("Error getting retained users count: {}", e.getMessage(), e);
         }
         return 0L;
+    }
+    
+    /**
+     * Get real-time interaction statistics from recommendation service
+     */
+    public Map<String, Object> getInteractionStatistics() {
+        Map<String, Object> stats = new HashMap<>();
+        
+        try {
+            String url = recommendationServiceUrl + "/api/recommendations/interactions/stats";
+            HttpHeaders headers = createServiceHeaders();
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            
+            @SuppressWarnings("rawtypes")
+            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+            
+            if (response != null && response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                Map<?, ?> body = response.getBody();
+                stats.putAll((Map<String, Object>) body);
+            } else {
+                // Return empty stats if service unavailable
+                stats.put("totalUsers", 0L);
+                stats.put("totalViews", 0L);
+                stats.put("totalClicks", 0L);
+                stats.put("totalAddToCart", 0L);
+                stats.put("totalPurchases", 0L);
+                stats.put("totalInteractions", 0L);
+                stats.put("trackedProducts", 0L);
+            }
+        } catch (Exception e) {
+            logger.warn("Error getting interaction statistics from recommendation service: {}", e.getMessage());
+            // Return empty stats on error
+            stats.put("totalUsers", 0L);
+            stats.put("totalViews", 0L);
+            stats.put("totalClicks", 0L);
+            stats.put("totalAddToCart", 0L);
+            stats.put("totalPurchases", 0L);
+            stats.put("totalInteractions", 0L);
+            stats.put("trackedProducts", 0L);
+        }
+        
+        return stats;
     }
     
     private HttpHeaders createServiceHeaders() {

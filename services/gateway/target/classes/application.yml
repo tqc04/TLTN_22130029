@@ -133,6 +133,7 @@ spring:
             - Path=/api/admin/warranty/**
 
         # Catch-all Admin Service (place AFTER specific admin routes)
+        # Using direct URL as fallback if service not in Eureka
         - id: admin-service
           uri: lb://admin-service
           predicates:

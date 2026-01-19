@@ -4,6 +4,7 @@ com\example\admin\controller\AnalyticsController.class
 com\example\admin\config\SecurityBeans.class
 com\example\admin\service\AdminService.class
 com\example\admin\entity\AdminRole.class
+com\example\admin\service\AnalyticsService.class
 com\example\admin\repository\AdminUserRepository.class
 com\example\admin\config\JwtAuthFilter.class
 com\example\admin\controller\AdminController.class

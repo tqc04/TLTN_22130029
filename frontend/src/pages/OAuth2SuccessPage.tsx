@@ -12,7 +12,6 @@ const OAuth2SuccessPage = () => {
       const params = new URLSearchParams(location.search);
       const token = params.get('token');
       const error = params.get('error');
-      const provider = params.get('provider');
 
       // Handle error case
       if (error) {

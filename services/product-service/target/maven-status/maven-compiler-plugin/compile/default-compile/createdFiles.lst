@@ -1,4 +1,5 @@
 com\example\product\dto\ProductDTO.class
+com\example\product\controller\ProductController$3.class
 com\example\product\repository\ProductReviewRepository.class
 com\example\product\entity\Category.class
 com\example\product\controller\ProductAdminController.class
@@ -10,9 +11,12 @@ com\example\product\entity\Brand.class
 com\example\product\service\ReviewService$1.class
 com\example\product\controller\FavoritesController.class
 com\example\product\service\FavoriteService.class
+com\example\product\service\ProductService$1.class
 com\example\product\entity\ProductVariant.class
 com\example\product\repository\BrandRepository.class
 com\example\product\entity\ProductImage.class
+com\example\product\controller\ProductController$4.class
+com\example\product\controller\ProductMetaController.class
 com\example\product\controller\ProductController.class
 com\example\product\entity\ProductReview.class
 com\example\product\ProductServiceApplication.class
@@ -27,6 +31,7 @@ com\example\product\controller\ProductController$2.class
 com\example\product\repository\FavoriteRepository.class
 com\example\product\repository\ProductVariantRepository.class
 com\example\product\controller\BrandController.class
+com\example\product\service\ProductService$2.class
 com\example\product\repository\CategoryRepository.class
 com\example\product\service\ReviewService.class
 com\example\product\config\MethodSecurityConfig.class

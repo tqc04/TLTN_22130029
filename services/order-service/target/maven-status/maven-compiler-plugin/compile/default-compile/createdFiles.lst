@@ -36,7 +36,9 @@ com\example\order\service\InventoryService.class
 com\example\order\service\ShippingService$5.class
 com\example\order\entity\PaymentStatus.class
 com\example\order\service\ShippingService$4.class
+com\example\order\repository\OrderItemRepository$TopProductStats.class
 com\example\order\repository\WarehouseRepository.class
 com\example\order\service\ShippingService$AddressValidationResult.class
 com\example\order\entity\OrderItem.class
 com\example\order\service\ShippingService$GHNResponse.class
+com\example\order\service\OrderService$1.class

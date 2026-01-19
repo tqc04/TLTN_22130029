@@ -87,6 +87,16 @@ public class AnalyticsController {
                 "categories", analyticsService.getCategoryDistribution()
         ));
     }
+    
+    /**
+     * Get real-time interaction statistics
+     * Returns counts of user behaviors (views, clicks, add_to_cart, purchases)
+     */
+    @GetMapping("/interactions")
+    public ResponseEntity<Map<String, Object>> interactions() {
+        Map<String, Object> stats = analyticsService.getInteractionStatistics();
+        return ResponseEntity.ok(stats);
+    }
 }
 
 

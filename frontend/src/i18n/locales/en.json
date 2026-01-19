@@ -35,8 +35,7 @@
     "noReviews": "No reviews yet",
     "reviewContent": "Review Content",
     "reviewTitle": "Review Title",
-    "submitReview": "Submit Review",
-    "cancel": "Cancel"
+    "submitReview": "Submit Review"
   },
   "navigation": {
     "home": "Home",
@@ -73,12 +72,18 @@
     "security": "Security",
     "preferences": "Preferences",
     "notifications": "Notifications",
+    "loginRequired": "Please log in to view your profile.",
     "firstName": "First Name",
     "lastName": "Last Name",
     "phoneNumber": "Phone Number",
     "address": "Address",
     "dateOfBirth": "Date of Birth",
     "avatar": "Profile Picture",
+    "verified": "Verified",
+    "unverified": "Unverified",
+    "uploading": "Uploading...",
+    "editProfile": "Edit Profile",
+    "saveChanges": "Save Changes",
     "changePassword": "Change Password",
     "currentPassword": "Current Password",
     "newPassword": "New Password",
@@ -100,7 +105,21 @@
     "profileUpdated": "Profile updated successfully!",
     "passwordChanged": "Password changed successfully!",
     "preferencesUpdated": "Preferences updated successfully!",
-    "notificationsUpdated": "Notification settings updated successfully!"
+    "notificationsUpdated": "Notification settings updated successfully!",
+    "avatarUploaded": "Avatar uploaded successfully!",
+    "errors": {
+      "updateProfileFailed": "Failed to update profile",
+      "fillAllPasswordFields": "Please fill in all password fields",
+      "passwordsDoNotMatch": "New passwords do not match",
+      "passwordMinLength": "New password must be at least {{min}} characters",
+      "changePasswordFailed": "Failed to change password",
+      "updatePreferencesFailed": "Failed to update preferences",
+      "updateNotificationsFailed": "Failed to update notification settings",
+      "selectImageFile": "Please select an image file",
+      "fileTooLarge": "File size must be less than {{maxMb}}MB",
+      "selectImageFirst": "Please select an image first",
+      "avatarUploadFailed": "Failed to upload avatar"
+    }
   },
   "products": {
     "title": "Products",

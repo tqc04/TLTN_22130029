@@ -59,6 +59,14 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         PaymentStatus paymentStatus, 
         LocalDateTime createdAt
     );
+    @Query("SELECT COALESCE(SUM(o.totalAmount), 0) FROM Order o WHERE o.status IN (com.example.order.entity.OrderStatus.COMPLETED, com.example.order.entity.OrderStatus.DELIVERED, com.example.order.entity.OrderStatus.CONFIRMED)")
+    java.math.BigDecimal sumTotalRevenue();
+
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.createdAt >= :date")
+    long countByCreatedAtAfter(LocalDateTime date);
+
+    @Query("SELECT COALESCE(SUM(o.totalAmount), 0) FROM Order o WHERE o.createdAt >= :date AND o.status IN (com.example.order.entity.OrderStatus.COMPLETED, com.example.order.entity.OrderStatus.DELIVERED, com.example.order.entity.OrderStatus.CONFIRMED)")
+    java.math.BigDecimal sumRevenueAfter(LocalDateTime date);
 }
 
 

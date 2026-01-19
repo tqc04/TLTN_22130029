@@ -62,9 +62,6 @@ const ProductsPage: React.FC = () => {
   const [filterType, setFilterType] = useState<string | null>(null); // 'sale', 'new', 'bestselling', 'recommended'
   const [saleTimeSlot, setSaleTimeSlot] = useState<string | null>(null);
   
-  // Page title based on filter
-  const [pageTitle, setPageTitle] = useState('Tất cả sản phẩm');
-
   // Debounced search
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   
@@ -78,28 +75,21 @@ const ProductsPage: React.FC = () => {
     
     if (sale === 'true') {
       setFilterType('sale');
-      setPageTitle('🔥 Flash Sale - Giảm giá sốc');
       if (saleTime) {
         setSaleTimeSlot(saleTime);
-        setPageTitle(`🔥 Flash Sale ${saleTime} - Giảm giá sốc`);
       }
     } else if (sort === 'newest') {
       setFilterType('new');
-      setPageTitle('✨ Sản phẩm mới nhất');
       setSortBy('createdAt-desc');
     } else if (sort === 'bestselling') {
       setFilterType('bestselling');
-      setPageTitle('🏆 Sản phẩm bán chạy nhất');
       setSortBy('soldCount-desc');
     } else if (recommended === 'true') {
       setFilterType('recommended');
-      setPageTitle('💡 Gợi ý cho bạn');
     } else if (category) {
       setSelectedCategory(category);
-      setPageTitle(`Danh mục: ${category}`);
     } else {
       setFilterType(null);
-      setPageTitle('Tất cả sản phẩm');
     }
   }, [searchParams]);
   

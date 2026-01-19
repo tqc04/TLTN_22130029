@@ -87,6 +87,18 @@ public class OrderService {
         return orderRepository.countByStatus(status);
     }
 
+    public long countByCreatedAtAfter(java.time.LocalDateTime date) {
+        return orderRepository.countByCreatedAtAfter(date);
+    }
+
+    public java.math.BigDecimal sumTotalRevenue() {
+        return orderRepository.sumTotalRevenue();
+    }
+
+    public java.math.BigDecimal sumRevenueAfter(java.time.LocalDateTime date) {
+        return orderRepository.sumRevenueAfter(date);
+    }
+
     public long countFlagged() { return orderRepository.countByIsFlaggedForReviewTrue(); }
 
     public Page<Order> findByUserId(String userId, Pageable pageable) {
@@ -753,13 +765,53 @@ public class OrderService {
 
         return stats.stream().map(s -> {
             Map<String, Object> m = new HashMap<>();
-            m.put("productId", s.getProductId());
-            m.put("productName", s.getProductName());
-            m.put("productImage", s.getProductImage());
+            String productId = s.getProductId();
+            String productName = s.getProductName();
+            String productImage = s.getProductImage();
+
+            // Fallback: nếu dữ liệu trên OrderItem thiếu, gọi product-service để enrich
+            if ((productName == null || productName.isBlank()) && productId != null) {
+                try {
+                    Map<String, Object> info = fetchProductInfo(productId);
+                    if (info != null) {
+                        productName = (String) info.getOrDefault("name", productName);
+                        productImage = (String) info.getOrDefault("imageUrl", productImage);
+                    }
+                } catch (Exception e) {
+                    logger.debug("Cannot enrich product {}: {}", productId, e.getMessage());
+                }
+            }
+
+            m.put("productId", productId);
+            m.put("productName", productName != null && !productName.isBlank() ? productName : productId);
+            m.put("productImage", productImage);
             m.put("totalQuantity", s.getTotalQuantity());
             m.put("totalRevenue", s.getTotalRevenue());
             return m;
         }).collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
+     * Fetch product info from product-service (name, image) for enrichment.
+     */
+    private Map<String, Object> fetchProductInfo(String productId) {
+        String url = productServiceUrl + "/api/products/" + productId;
+        org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+        String credentials = interserviceUsername + ":" + interservicePassword;
+        String encodedCredentials = java.util.Base64.getEncoder().encodeToString(credentials.getBytes());
+        headers.set("Authorization", "Basic " + encodedCredentials);
+
+        org.springframework.http.HttpEntity<String> entity = new org.springframework.http.HttpEntity<>(headers);
+        @SuppressWarnings("rawtypes")
+        org.springframework.http.ResponseEntity<Map> response = restTemplate.exchange(
+                url, org.springframework.http.HttpMethod.GET, entity, Map.class);
+
+        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> product = (Map<String, Object>) response.getBody();
+            return product;
+        }
+        return null;
     }
     
     /**

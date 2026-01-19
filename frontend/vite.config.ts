@@ -94,12 +94,10 @@ export default defineConfig(({ mode }) => {
       outDir: 'dist',
       sourcemap: isDev,
       chunkSizeWarningLimit: 500,
-      minify: 'terser',
-      terserOptions: {
-        compress: {
-          drop_console: isProd,
-          drop_debugger: true,
-        },
+      // esbuild is faster and more reliable on Windows; also avoids Worker EINVAL issues seen with terser.
+      minify: 'esbuild',
+      esbuild: {
+        drop: isProd ? ['console', 'debugger'] : [],
       },
       rollupOptions: {
         output: {

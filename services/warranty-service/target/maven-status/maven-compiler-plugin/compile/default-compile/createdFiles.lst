@@ -3,6 +3,7 @@ com\shoppro\warranty\entity\WarrantyPriority.class
 com\shoppro\warranty\dto\WarrantyRequestDTO.class
 com\shoppro\warranty\config\KafkaConfig.class
 com\shoppro\warranty\controller\AdminWarrantyController.class
+com\shoppro\warranty\dto\WarrantyStatsDTO.class
 com\shoppro\warranty\controller\WarrantyController.class
 com\shoppro\warranty\entity\WarrantyRequest.class
 com\shoppro\warranty\service\OrderServiceClient.class

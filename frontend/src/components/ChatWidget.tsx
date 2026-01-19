@@ -69,7 +69,8 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [inputMessage, setInputMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [sessionId, setSessionId] = useState<number | null>(null)
+  // AI service session id (UUID string)
+  const [sessionId, setSessionId] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [showEmoji, setShowEmoji] = useState(false)
@@ -89,11 +90,13 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
     try {
       const response = await apiService.createChatSession(user.id, initialMessage)
       if (response.success && response.data) {
-        const sessionData = response.data as ChatSession;
-        if (sessionData.id) {
-          setSessionId(sessionData.id)
-          localStorage.setItem(storageKey, String(sessionData.id))
-          return sessionData.id
+        const sessionData = response.data as ChatSession
+        // Backend returns { success, sessionId, ... } (UUID string)
+        const sid = (sessionData as any).sessionId || (sessionData as any).id
+        if (sid) {
+          setSessionId(String(sid))
+          localStorage.setItem(storageKey, String(sid))
+          return String(sid)
         }
       }
     } catch (e) {
@@ -292,10 +295,7 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
   useEffect(() => {
     const existing = localStorage.getItem(storageKey)
     if (existing) {
-      const parsed = parseInt(existing, 10)
-      if (!Number.isNaN(parsed)) {
-        setSessionId(parsed)
-      }
+      setSessionId(existing)
     }
   }, [storageKey])
 
@@ -307,7 +307,7 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
         message: '',
         response:
           welcomeMessage ||
-          'Xin chào, tôi là Stylist AI tư vấn thời trang. Bạn đang tìm đồ gì?',
+          'Xin chào, tôi là AI tư vấn công nghệ. Bạn đang tìm sản phẩm công nghệ nào?',
         messageType: 'BOT',
         timestamp: new Date().toISOString()
       }
@@ -330,7 +330,7 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
     if (!text) return
 
     const userMsg: ChatMessage = {
-      sessionId: sessionId ? String(sessionId) : '',
+      sessionId: sessionId || '',
       message: text,
       response: undefined,
       messageType: 'USER',
@@ -353,48 +353,41 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
         return
       }
 
-      if (workingSessionId && isAuthenticated && user) {
-        // User is logged in, use session-based chat
-        const response = await apiService.sendChatMessage(text, String(workingSessionId))
-        if (response.success) {
-          const botMsg: ChatMessage = {
-            sessionId: response.data.sessionId ? String(response.data.sessionId) : '',
-            message: response.data.message,
-            response: response.data.response,
-            messageType: 'BOT',
-            timestamp: response.data.timestamp
-          }
-          setMessages(prev => [...prev, botMsg])
-        } else {
-          throw new Error('API returned unsuccessful status')
+      // Always use public endpoint (works for both anonymous and logged-in), but pass userId + sessionId when available
+      const response = await apiService.sendChatMessagePublic(text, user?.id, workingSessionId || undefined)
+      if (response.success) {
+        const nextSessionId = response.data.sessionId ? String(response.data.sessionId) : ''
+        if (nextSessionId && nextSessionId !== sessionId) {
+          setSessionId(nextSessionId)
+          localStorage.setItem(storageKey, nextSessionId)
         }
+        const botMsg: ChatMessage = {
+          sessionId: nextSessionId,
+          message: (response.data as any).message || text,
+          response: (response.data as any).response || (response.data as any).text,
+          messageType: 'BOT',
+          timestamp: (response.data as any).timestamp || new Date().toISOString()
+        }
+        setMessages(prev => [...prev, botMsg])
       } else {
-        // User is not logged in, use public chat endpoint
-        const response = await apiService.sendChatMessagePublic(text, user?.id)
-        if (response.success) {
-          const botMsg: ChatMessage = {
-            sessionId: response.data.sessionId ? String(response.data.sessionId) : '',
-            message: response.data.message,
-            response: response.data.response || (response.data as any).text,
-            messageType: 'BOT',
-            timestamp: response.data.timestamp || new Date().toISOString()
-          }
-          setMessages(prev => [...prev, botMsg])
-        } else {
-          throw new Error('API returned unsuccessful status')
-        }
+        throw new Error('API returned unsuccessful status')
       }
     } catch (err) {
       // One silent retry via public endpoint if initial call failed
       try {
-        const retry = await apiService.sendChatMessagePublic(text, user?.id)
+        const retry = await apiService.sendChatMessagePublic(text, user?.id, workingSessionId || undefined)
         if (retry.success) {
+          const nextSessionId = retry.data.sessionId ? String(retry.data.sessionId) : ''
+          if (nextSessionId && nextSessionId !== sessionId) {
+            setSessionId(nextSessionId)
+            localStorage.setItem(storageKey, nextSessionId)
+          }
           const botMsg: ChatMessage = {
-            sessionId: retry.data.sessionId ? String(retry.data.sessionId) : '',
-            message: retry.data.message,
-          response: retry.data.response || (retry.data as any).text,
+            sessionId: nextSessionId,
+            message: (retry.data as any).message || text,
+            response: (retry.data as any).response || (retry.data as any).text,
             messageType: 'BOT',
-            timestamp: retry.data.timestamp || new Date().toISOString()
+            timestamp: (retry.data as any).timestamp || new Date().toISOString()
           }
           setMessages(prev => [...prev, botMsg])
           return
@@ -500,7 +493,7 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
                 <SmartToy sx={{ color: 'white' }} />
               </Avatar>
               <Typography variant="subtitle1" fontWeight={700}>
-                {title || 'Stylist AI Tư Vấn'}
+                {title || 'AI Tư Vấn Công Nghệ'}
               </Typography>
             </Box>
 
@@ -551,7 +544,9 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
                         <SmartToy />
                       </Avatar>
                       <Box sx={{ bgcolor: 'grey.100', px: 1.5, py: 1, borderRadius: 3, borderTopLeftRadius: 0, maxWidth: '75%', boxShadow: '0 2px 10px rgba(0,0,0,0.04)' }}>
-                        <Typography variant="body2">{msg.response}</Typography>
+                        <Typography variant="body2" sx={{ whiteSpace: 'pre-line', wordBreak: 'break-word' }}>
+                          {msg.response}
+                        </Typography>
                       </Box>
                     </Box>
                   )}

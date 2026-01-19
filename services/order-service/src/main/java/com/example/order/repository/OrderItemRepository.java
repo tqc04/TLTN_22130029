@@ -27,7 +27,11 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
                sum(oi.quantity) as totalQuantity,
                sum(oi.totalPrice) as totalRevenue
         from OrderItem oi
-        where oi.order.status = com.example.order.entity.OrderStatus.COMPLETED
+        where oi.order.status in (
+            com.example.order.entity.OrderStatus.COMPLETED,
+            com.example.order.entity.OrderStatus.DELIVERED,
+            com.example.order.entity.OrderStatus.CONFIRMED
+        )
         group by oi.productId, oi.productName, oi.productImage
         order by sum(oi.quantity) desc
     """)

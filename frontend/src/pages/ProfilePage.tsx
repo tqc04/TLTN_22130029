@@ -35,6 +35,7 @@ import {
 } from '@mui/icons-material'
 import { useAuth } from '../contexts/AuthContext'
 import { apiService } from '../services/api'
+import { useTranslation } from 'react-i18next'
 
 // Helper function to format avatar URL
 const formatAvatarUrl = (url: string | undefined | null): string => {
@@ -99,6 +100,7 @@ interface PreferencesData {
 
 const ProfilePage: React.FC = () => {
   const { user, isAuthenticated, refreshUser } = useAuth()
+  const { t } = useTranslation()
   const [tabValue, setTabValue] = useState(0)
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -176,7 +178,7 @@ const ProfilePage: React.FC = () => {
     return (
       <Container maxWidth="sm" sx={{ mt: 4 }}>
         <Alert severity="warning">
-          Please log in to view your profile.
+          {t('profile.loginRequired')}
         </Alert>
       </Container>
     )
@@ -204,7 +206,7 @@ const ProfilePage: React.FC = () => {
       
       const response = await apiService.updateUserProfile(updateData)
       if (response.success) {
-        setMessage({ type: 'success', text: 'Profile updated successfully!' })
+        setMessage({ type: 'success', text: t('profile.profileUpdated') })
         setIsEditing(false)
         
         // Refresh user data in AuthContext to sync changes everywhere (navbar, etc.)
@@ -215,7 +217,7 @@ const ProfilePage: React.FC = () => {
         }
       }
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update profile';
+      const errorMessage = error instanceof Error ? error.message : t('profile.errors.updateProfileFailed')
       setMessage({
         type: 'error',
         text: errorMessage
@@ -227,17 +229,17 @@ const ProfilePage: React.FC = () => {
 
   const handlePasswordChange = async () => {
     if (!passwordData.currentPassword || !passwordData.newPassword) {
-      setMessage({ type: 'error', text: 'Please fill in all password fields' })
+      setMessage({ type: 'error', text: t('profile.errors.fillAllPasswordFields') })
       return
     }
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setMessage({ type: 'error', text: 'New passwords do not match' })
+      setMessage({ type: 'error', text: t('profile.errors.passwordsDoNotMatch') })
       return
     }
 
     if (passwordData.newPassword.length < 6) {
-      setMessage({ type: 'error', text: 'New password must be at least 6 characters' })
+      setMessage({ type: 'error', text: t('profile.errors.passwordMinLength', { min: 6 }) })
       return
     }
 
@@ -251,11 +253,11 @@ const ProfilePage: React.FC = () => {
       )
       
       if (response.success) {
-        setMessage({ type: 'success', text: 'Password changed successfully!' })
+        setMessage({ type: 'success', text: t('profile.passwordChanged') })
         setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
       }
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to change password';
+      const errorMessage = error instanceof Error ? error.message : t('profile.errors.changePasswordFailed')
       setMessage({
         type: 'error',
         text: errorMessage
@@ -276,7 +278,7 @@ const ProfilePage: React.FC = () => {
         recommendationEnabled: preferences.recommendationEnabled
       })
       if (response.success) {
-        setMessage({ type: 'success', text: 'Preferences updated successfully!' })
+        setMessage({ type: 'success', text: t('profile.preferencesUpdated') })
         
         // Refresh user data in AuthContext to sync changes everywhere
         try {
@@ -286,7 +288,7 @@ const ProfilePage: React.FC = () => {
         }
       }
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update preferences';
+      const errorMessage = error instanceof Error ? error.message : t('profile.errors.updatePreferencesFailed')
       setMessage({
         type: 'error',
         text: errorMessage
@@ -306,7 +308,7 @@ const ProfilePage: React.FC = () => {
         pushNotifications: preferences.pushNotifications
       })
       if (response.success) {
-        setMessage({ type: 'success', text: 'Notification settings updated successfully!' })
+        setMessage({ type: 'success', text: t('profile.notificationsUpdated') })
         
         // Refresh user data in AuthContext to sync changes everywhere
         try {
@@ -316,7 +318,7 @@ const ProfilePage: React.FC = () => {
         }
       }
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update notification settings';
+      const errorMessage = error instanceof Error ? error.message : t('profile.errors.updateNotificationsFailed')
       setMessage({
         type: 'error',
         text: errorMessage
@@ -336,13 +338,13 @@ const ProfilePage: React.FC = () => {
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      setMessage({ type: 'error', text: 'Please select an image file' })
+      setMessage({ type: 'error', text: t('profile.errors.selectImageFile') })
       return
     }
 
     // Validate file size (5MB)
     if (file.size > 5 * 1024 * 1024) {
-      setMessage({ type: 'error', text: 'File size must be less than 5MB' })
+      setMessage({ type: 'error', text: t('profile.errors.fileTooLarge', { maxMb: 5 }) })
       return
     }
 
@@ -357,7 +359,7 @@ const ProfilePage: React.FC = () => {
 
   const handleSaveAvatar = async () => {
     if (!selectedAvatarFile || !user?.id) {
-      setMessage({ type: 'error', text: 'Please select an image first' })
+      setMessage({ type: 'error', text: t('profile.errors.selectImageFirst') })
       return
     }
 
@@ -422,13 +424,13 @@ const ProfilePage: React.FC = () => {
           }
         }
         
-        setMessage({ type: 'success', text: 'Avatar uploaded successfully!' })
+        setMessage({ type: 'success', text: t('profile.avatarUploaded') })
       } else {
-        setMessage({ type: 'error', text: 'Failed to upload avatar' })
+        setMessage({ type: 'error', text: t('profile.errors.avatarUploadFailed') })
       }
     } catch (error: unknown) {
       console.error('Avatar upload error:', error)
-      const errorMessage = error instanceof Error ? error.message : 'Failed to upload avatar'
+      const errorMessage = error instanceof Error ? error.message : t('profile.errors.avatarUploadFailed')
       setMessage({
         type: 'error',
         text: errorMessage
@@ -517,7 +519,7 @@ const ProfilePage: React.FC = () => {
                       borderRadius: 1
                     }}
                   >
-                    <Typography variant="caption" fontWeight={600}>Uploading...</Typography>
+                    <Typography variant="caption" fontWeight={600}>{t('profile.uploading')}</Typography>
                   </Box>
                 )}
               </Box>
@@ -551,7 +553,7 @@ const ProfilePage: React.FC = () => {
                       transition: 'all 0.2s ease-in-out'
                     }}
                   >
-                    Lưu
+                    {t('common.save')}
                   </Button>
                   <Button
                     variant="outlined"
@@ -575,7 +577,7 @@ const ProfilePage: React.FC = () => {
                       transition: 'all 0.2s ease-in-out'
                     }}
                   >
-                    Hủy
+                    {t('common.cancel')}
                   </Button>
                 </Box>
               )}
@@ -595,7 +597,7 @@ const ProfilePage: React.FC = () => {
                 size="small"
               />
               <Chip
-                label={user?.isEmailVerified ? 'Verified' : 'Unverified'}
+                label={user?.isEmailVerified ? t('profile.verified') : t('profile.unverified')}
                 color={user?.isEmailVerified ? 'success' : 'warning'}
                 size="small"
               />
@@ -612,10 +614,10 @@ const ProfilePage: React.FC = () => {
           aria-label="profile tabs"
           sx={{ borderBottom: 1, borderColor: 'divider' }}
         >
-          <Tab icon={<Person />} label="Profile" />
-          <Tab icon={<Security />} label="Security" />
-          <Tab icon={<Settings />} label="Preferences" />
-          <Tab icon={<Notifications />} label="Notifications" />
+          <Tab icon={<Person />} label={t('common.profile')} />
+          <Tab icon={<Security />} label={t('profile.security')} />
+          <Tab icon={<Settings />} label={t('profile.preferences')} />
+          <Tab icon={<Notifications />} label={t('profile.notifications')} />
         </Tabs>
 
         {message && (
@@ -630,7 +632,7 @@ const ProfilePage: React.FC = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                label="First Name"
+                label={t('profile.firstName')}
                 value={profileData.firstName}
                 onChange={(e) => setProfileData(prev => ({ ...prev, firstName: e.target.value }))}
                 disabled={!isEditing}
@@ -647,7 +649,7 @@ const ProfilePage: React.FC = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                label="Last Name"
+                label={t('profile.lastName')}
                 value={profileData.lastName}
                 onChange={(e) => setProfileData(prev => ({ ...prev, lastName: e.target.value }))}
                 disabled={!isEditing}
@@ -657,7 +659,7 @@ const ProfilePage: React.FC = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                label="Email"
+                label={t('auth.email')}
                 value={profileData.email}
                 disabled={true} // Email cannot be edited
                 InputProps={{
@@ -673,7 +675,7 @@ const ProfilePage: React.FC = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                label="Phone Number"
+                label={t('profile.phoneNumber')}
                 value={profileData.phoneNumber}
                 onChange={(e) => setProfileData(prev => ({ ...prev, phoneNumber: e.target.value }))}
                 disabled={!isEditing}
@@ -690,7 +692,7 @@ const ProfilePage: React.FC = () => {
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Address"
+                label={t('profile.address')}
                 value={profileData.address}
                 onChange={(e) => setProfileData(prev => ({ ...prev, address: e.target.value }))}
                 disabled={!isEditing}
@@ -709,7 +711,7 @@ const ProfilePage: React.FC = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                label="Date of Birth"
+                label={t('profile.dateOfBirth')}
                 type="date"
                 value={profileData.dateOfBirth}
                 onChange={(e) => setProfileData(prev => ({ ...prev, dateOfBirth: e.target.value }))}
@@ -727,7 +729,7 @@ const ProfilePage: React.FC = () => {
                 startIcon={<Edit />}
                 onClick={() => setIsEditing(true)}
               >
-                Edit Profile
+                {t('profile.editProfile')}
               </Button>
             ) : (
               <>
@@ -737,7 +739,7 @@ const ProfilePage: React.FC = () => {
                   onClick={handleProfileSave}
                   disabled={isLoading}
                 >
-                  Save Changes
+                  {t('profile.saveChanges')}
                 </Button>
                 <Button
                   variant="outlined"
@@ -745,7 +747,7 @@ const ProfilePage: React.FC = () => {
                   onClick={() => setIsEditing(false)}
                   disabled={isLoading}
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
               </>
             )}
@@ -755,13 +757,13 @@ const ProfilePage: React.FC = () => {
         {/* Security Tab */}
         <TabPanel value={tabValue} index={1}>
           <Typography variant="h6" gutterBottom>
-            Change Password
+            {t('profile.changePassword')}
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                label="Current Password"
+                label={t('profile.currentPassword')}
                 type={showPasswords.current ? 'text' : 'password'}
                 value={passwordData.currentPassword}
                 onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
@@ -788,7 +790,7 @@ const ProfilePage: React.FC = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                label="New Password"
+                label={t('profile.newPassword')}
                 type={showPasswords.new ? 'text' : 'password'}
                 value={passwordData.newPassword}
                 onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
@@ -815,7 +817,7 @@ const ProfilePage: React.FC = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                label="Confirm New Password"
+                label={t('profile.confirmNewPassword')}
                 type={showPasswords.confirm ? 'text' : 'password'}
                 value={passwordData.confirmPassword}
                 onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
@@ -847,14 +849,14 @@ const ProfilePage: React.FC = () => {
             disabled={isLoading}
             sx={{ mt: 2 }}
           >
-            Change Password
+            {t('profile.changePassword')}
           </Button>
         </TabPanel>
 
         {/* Preferences Tab */}
         <TabPanel value={tabValue} index={2}>
           <Typography variant="h6" gutterBottom>
-            Account Preferences
+            {t('profile.accountPreferences')}
           </Typography>
           <Box sx={{ mb: 3 }}>
             <FormControlLabel
@@ -864,10 +866,10 @@ const ProfilePage: React.FC = () => {
                   onChange={(e) => setPreferences(prev => ({ ...prev, personalizationEnabled: e.target.checked }))}
                 />
               }
-              label="Enable Personalization"
+              label={t('profile.enablePersonalization')}
             />
             <Typography variant="body2" color="text.secondary" sx={{ ml: 4 }}>
-              Allow the system to personalize your experience based on your behavior
+              {t('profile.enablePersonalizationDesc')}
             </Typography>
           </Box>
 
@@ -879,10 +881,10 @@ const ProfilePage: React.FC = () => {
                   onChange={(e) => setPreferences(prev => ({ ...prev, chatbotEnabled: e.target.checked }))}
                 />
               }
-              label="Enable AI Assistant"
+              label={t('profile.enableAIAssistant')}
             />
             <Typography variant="body2" color="text.secondary" sx={{ ml: 4 }}>
-              Allow access to the AI-powered chatbot assistant
+              {t('profile.enableAIAssistantDesc')}
             </Typography>
           </Box>
 
@@ -894,10 +896,10 @@ const ProfilePage: React.FC = () => {
                   onChange={(e) => setPreferences(prev => ({ ...prev, recommendationEnabled: e.target.checked }))}
                 />
               }
-              label="Enable Recommendations"
+              label={t('profile.enableRecommendations')}
             />
             <Typography variant="body2" color="text.secondary" sx={{ ml: 4 }}>
-              Receive personalized product recommendations
+              {t('profile.enableRecommendationsDesc')}
             </Typography>
           </Box>
 
@@ -906,14 +908,14 @@ const ProfilePage: React.FC = () => {
             onClick={handlePreferencesSave}
             disabled={isLoading}
           >
-            Save Preferences
+            {t('profile.savePreferences')}
           </Button>
         </TabPanel>
 
         {/* Notifications Tab */}
         <TabPanel value={tabValue} index={3}>
           <Typography variant="h6" gutterBottom>
-            Notification Settings
+            {t('profile.notificationSettings')}
           </Typography>
           <Box sx={{ mb: 3 }}>
             <FormControlLabel
@@ -923,10 +925,10 @@ const ProfilePage: React.FC = () => {
                   onChange={(e) => setPreferences(prev => ({ ...prev, emailNotifications: e.target.checked }))}
                 />
               }
-              label="Email Notifications"
+              label={t('profile.emailNotifications')}
             />
             <Typography variant="body2" color="text.secondary" sx={{ ml: 4 }}>
-              Receive order updates and promotional emails
+              {t('profile.emailNotificationsDesc')}
             </Typography>
           </Box>
 
@@ -938,10 +940,10 @@ const ProfilePage: React.FC = () => {
                   onChange={(e) => setPreferences(prev => ({ ...prev, pushNotifications: e.target.checked }))}
                 />
               }
-              label="Push Notifications"
+              label={t('profile.pushNotifications')}
             />
             <Typography variant="body2" color="text.secondary" sx={{ ml: 4 }}>
-              Receive browser push notifications for important updates
+              {t('profile.pushNotificationsDesc')}
             </Typography>
           </Box>
 
@@ -950,7 +952,7 @@ const ProfilePage: React.FC = () => {
             onClick={handleNotificationSettingsSave}
             disabled={isLoading}
           >
-            Save Settings
+            {t('profile.saveSettings')}
           </Button>
         </TabPanel>
       </Paper>

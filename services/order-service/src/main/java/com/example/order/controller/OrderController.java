@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -448,6 +449,38 @@ public class OrderController {
     public ResponseEntity<Page<OrderDTO>> flagged(Pageable pageable) {
         Page<Order> orders = orderService.findFlagged(pageable);
         return ResponseEntity.ok(orders.map(OrderDTO::from));
+    }
+
+    @GetMapping("/dashboard-stats")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR', 'STAFF')")
+    public ResponseEntity<Map<String, Object>> dashboardStats() {
+        Map<String, Object> stats = new java.util.HashMap<>();
+        
+        // Total Revenue
+        stats.put("totalRevenue", orderService.sumTotalRevenue());
+        
+        // Orders Today (since start of day)
+        java.time.LocalDateTime startOfDay = java.time.LocalDate.now().atStartOfDay();
+        stats.put("ordersToday", orderService.countByCreatedAtAfter(startOfDay));
+        stats.put("revenueToday", orderService.sumRevenueAfter(startOfDay));
+        
+        // Pending Orders (Action needed)
+        stats.put("pendingOrders", orderService.countByStatus(com.example.order.entity.OrderStatus.PENDING));
+        stats.put("processingOrders", orderService.countByStatus(com.example.order.entity.OrderStatus.PROCESSING));
+        
+        // Total Orders
+        stats.put("totalOrders", orderService.countByStatus(com.example.order.entity.OrderStatus.COMPLETED) + 
+                                 orderService.countByStatus(com.example.order.entity.OrderStatus.DELIVERED) +
+                                 orderService.countByStatus(com.example.order.entity.OrderStatus.CONFIRMED) +
+                                 orderService.countByStatus(com.example.order.entity.OrderStatus.PENDING) +
+                                 orderService.countByStatus(com.example.order.entity.OrderStatus.PROCESSING) + 
+                                 orderService.countByStatus(com.example.order.entity.OrderStatus.SHIPPED));
+
+        // Recent Orders (Limit 5)
+        Page<OrderDTO> recentOrders = orderService.findAll(PageRequest.of(0, 5)).map(OrderDTO::from);
+        stats.put("recentOrders", recentOrders.getContent());
+        
+        return ResponseEntity.ok(stats);
     }
 
     @GetMapping("/stats")

@@ -19,7 +19,6 @@ import {
   DialogActions,
   Divider,
   IconButton,
-  Tooltip,
 } from '@mui/material';
 import {
   LocalOffer,

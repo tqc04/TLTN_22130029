@@ -2,6 +2,7 @@ package com.example.recommendation.service;
 
 import com.example.recommendation.dto.ProductRecommendation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,7 +20,6 @@ import java.util.stream.Collectors;
  * 
  * Sử dụng 2 phương pháp chính:
  * 1. Collaborative Filtering (CF) - Dựa trên hành vi người dùng tương tự
- * 2. Content-Based Filtering (CBF) - Dựa trên đặc tính sản phẩm
  */
 @Service
 public class RecommendationService {
@@ -68,67 +68,52 @@ public class RecommendationService {
     }
     
     /**
-     * Get personalized recommendations using AI
-     * 
-     * Tích hợp AI để gợi ý sản phẩm dựa trên hành vi người dùng:
-     * 
-     * Strategy (AI-based):
-     * 1. Collaborative Filtering (ML-based) - Sử dụng SVD model để phân tích hành vi users tương tự
-     * 2. Content-Based Filtering - Phân tích đặc tính sản phẩm (category, brand, price, description)
-     * 3. Hybrid Approach - Kết hợp CF và CBF để tăng độ chính xác
+     * Get personalized recommendations using Collaborative Filtering (CF) ONLY
+     *
+     * Chỉ sử dụng Collaborative Filtering để gợi ý sản phẩm:
+     *
+     * Strategy: Pure CF-based
+     * - Sử dụng SVD model để phân tích hành vi users tương tự
+     * - Tìm users có hành vi tương tự, recommend products họ đã thích
+     * - Fallback: Redis-based similarity nếu ML model fail
      */
     public List<ProductRecommendation> getPersonalizedRecommendations(String userId, int limit) {
         List<ProductRecommendation> recommendations = new ArrayList<>();
-        
+
         // ============================================
-        // METHOD 1: COLLABORATIVE FILTERING (CF) - AI
+        // ONLY: COLLABORATIVE FILTERING (CF) - AI
         // ============================================
         // Sử dụng SVD model (AI) để phân tích patterns từ hành vi users tương tự
         // Tìm users có hành vi tương tự, recommend products họ đã thích
         try {
             List<ProductRecommendation> cfRecommendations = getCollaborativeFilteringRecommendations(userId, limit);
             if (!cfRecommendations.isEmpty()) {
-                logger.info("Returning {} Collaborative Filtering (AI) recommendations for user {}", 
+                logger.info("Returning {} Collaborative Filtering (AI) recommendations for user {}",
                     cfRecommendations.size(), userId);
                 return cfRecommendations;
+            } else {
+                logger.warn("CF returned empty recommendations for user {}", userId);
             }
         } catch (Exception e) {
-            logger.warn("Collaborative Filtering failed: {}", e.getMessage());
+            logger.error("Collaborative Filtering failed: {}", e.getMessage(), e);
         }
-        
+
         // ============================================
-        // METHOD 2: HYBRID APPROACH (CF + CBF)
+        // FALLBACK: Popular products when CF fails
         // ============================================
-        // Kết hợp Collaborative Filtering và Content-Based Filtering
-        // Để tăng độ chính xác và coverage
+        logger.warn("CF failed for user {}, returning popular products as fallback", userId);
         try {
-            List<ProductRecommendation> hybridRecommendations = getHybridRecommendations(userId, limit);
-            if (!hybridRecommendations.isEmpty()) {
-                logger.info("Returning {} Hybrid (CF+CBF) recommendations for user {}", 
-                    hybridRecommendations.size(), userId);
-                return hybridRecommendations;
+            List<ProductRecommendation> popularRecommendations = getPopularProducts(limit);
+            if (!popularRecommendations.isEmpty()) {
+                logger.info("Returning {} popular products as fallback for user {}",
+                    popularRecommendations.size(), userId);
+                return popularRecommendations;
             }
         } catch (Exception e) {
-            logger.warn("Hybrid recommendation failed: {}", e.getMessage());
+            logger.error("Popular products fallback failed: {}", e.getMessage(), e);
         }
-        
-        // ============================================
-        // METHOD 3: CONTENT-BASED FILTERING (CBF) - AI
-        // ============================================
-        // Phân tích đặc tính sản phẩm user đã tương tác
-        // Recommend products tương tự về category, brand, price, description
-        try {
-            List<ProductRecommendation> cbfRecommendations = getContentBasedRecommendations(userId, limit);
-            if (!cbfRecommendations.isEmpty()) {
-                logger.info("Returning {} Content-Based (AI) recommendations for user {}", 
-                    cbfRecommendations.size(), userId);
-                return cbfRecommendations;
-            }
-        } catch (Exception e) {
-            logger.warn("Content-Based Filtering failed: {}", e.getMessage());
-        }
-        
-        logger.warn("No recommendations available for user {} - no user behavior data", userId);
+
+        logger.warn("No recommendations available for user {} - all methods failed", userId);
         return recommendations;
     }
     
@@ -262,20 +247,14 @@ public class RecommendationService {
     }
     
     /**
-     * HYBRID RECOMMENDATION (CF + CBF) - AI-based
-     * 
-     * Kết hợp Collaborative Filtering và Content-Based Filtering để tăng độ chính xác:
-     * 
-     * Logic:
-     * 1. Lấy recommendations từ CF (AI model)
-     * 2. Lấy recommendations từ CBF (similarity analysis)
-     * 3. Kết hợp và re-rank dựa trên weighted score
-     * 4. Return top N hybrid recommendations
+     * HYBRID RECOMMENDATION (CF + CBF) - DISABLED
+     * Method này đã bị disable để chỉ sử dụng CF thuần túy
      */
+    /*
     private List<ProductRecommendation> getHybridRecommendations(String userId, int limit) {
         List<ProductRecommendation> hybridRecommendations = new ArrayList<>();
         Map<String, ProductRecommendation> productMap = new HashMap<>();
-        
+
         try {
             // Get CF recommendations (weight: 60%)
             List<ProductRecommendation> cfRecs = getCollaborativeFilteringRecommendations(userId, limit * 2);
@@ -283,7 +262,7 @@ public class RecommendationService {
                 pr.setScore(pr.getScore() * 0.6); // CF weight: 60%
                 productMap.put(pr.getProductId(), pr);
             }
-            
+
             // Get CBF recommendations (weight: 40%)
             List<ProductRecommendation> cbfRecs = getContentBasedRecommendations(userId, limit * 2);
             for (ProductRecommendation pr : cbfRecs) {
@@ -299,38 +278,32 @@ public class RecommendationService {
                     productMap.put(pid, pr);
                 }
             }
-            
+
             // Sort by combined score and return top N
             hybridRecommendations = new ArrayList<>(productMap.values());
             hybridRecommendations.sort((a, b) -> Double.compare(b.getScore(), a.getScore()));
             hybridRecommendations = hybridRecommendations.stream()
                 .limit(limit)
                 .collect(Collectors.toList());
-            
+
             // Set type for all hybrid recommendations
             for (ProductRecommendation pr : hybridRecommendations) {
                 pr.setType("HYBRID");
             }
-            
+
         } catch (Exception e) {
             logger.error("Hybrid recommendation failed: {}", e.getMessage());
         }
-        
+
         return hybridRecommendations;
     }
+    */
     
-    /**
-     * CONTENT-BASED FILTERING (CBF) - AI-based
-     * 
-     * Phân tích đặc tính sản phẩm để gợi ý sản phẩm tương tự:
-     * 
-     * Logic AI:
-     * 1. Lấy products user đã tương tác (xem, mua, review)
-     * 2. Phân tích đặc tính: category, brand, price range, description
-     * 3. Tính similarity score dựa trên features (AI similarity analysis)
-     * 4. Tìm products tương tự về đặc tính
-     * 5. Recommend products tương tự nhất
+    /*
+     * CONTENT-BASED FILTERING (CBF) - DISABLED
+     * Method này đã bị disable để chỉ sử dụng CF thuần túy
      */
+    /*
     private List<ProductRecommendation> getContentBasedRecommendations(String userId, int limit) {
         List<ProductRecommendation> recommendations = new ArrayList<>();
         
@@ -378,10 +351,10 @@ public class RecommendationService {
         } catch (Exception e) {
             logger.error("Content-Based Filtering failed: {}", e.getMessage());
         }
-        
+
         return recommendations;
     }
-    
+    */
     /**
      * Get products user has interacted with (from reviews, orders, behaviors)
      */
@@ -750,5 +723,203 @@ public class RecommendationService {
             }
         }
         return null;
+    }
+    
+    /**
+     * Get real-time interaction statistics from Redis
+     * Returns counts of different user behaviors
+     */
+    public Map<String, Object> getInteractionStatistics() {
+        Map<String, Object> stats = new HashMap<>();
+        
+        try {
+            if (redisTemplate != null) {
+                // Count interactions by directly querying behavior type keys
+                // This is more efficient and accurate than iterating through all user keys
+                long totalViews = 0;
+                long totalClicks = 0;
+                long totalAddToCart = 0;
+                long totalPurchases = 0;
+                Set<String> uniqueUsers = new HashSet<>();
+                
+                // Get all user behavior keys (user:behavior:userId)
+                Set<String> userBehaviorKeys = redisTemplate.keys("user:behavior:*");
+                if (userBehaviorKeys != null && !userBehaviorKeys.isEmpty()) {
+                    // Filter out behavior type keys (those with :VIEW, :CLICK, etc.)
+                    for (String key : userBehaviorKeys) {
+                        // Check if this is a base user behavior key (not a behavior type key)
+                        if (!key.contains(":VIEW") && !key.contains(":CLICK") && 
+                            !key.contains(":ADD_TO_CART") && !key.contains(":PURCHASE")) {
+                            // Extract userId from key (user:behavior:userId)
+                            String userId = key.replace("user:behavior:", "");
+                            if (!userId.isEmpty()) {
+                                uniqueUsers.add(userId);
+                            }
+                            
+                            // Count each behavior type for this user
+                            String viewKey = key + ":VIEW";
+                            String clickKey = key + ":CLICK";
+                            String addToCartKey = key + ":ADD_TO_CART";
+                            String purchaseKey = key + ":PURCHASE";
+                            
+                            Set<Object> views = redisTemplate.opsForSet().members(viewKey);
+                            Set<Object> clicks = redisTemplate.opsForSet().members(clickKey);
+                            Set<Object> addToCarts = redisTemplate.opsForSet().members(addToCartKey);
+                            Set<Object> purchases = redisTemplate.opsForSet().members(purchaseKey);
+                            
+                            if (views != null) totalViews += views.size();
+                            if (clicks != null) totalClicks += clicks.size();
+                            if (addToCarts != null) totalAddToCart += addToCarts.size();
+                            if (purchases != null) totalPurchases += purchases.size();
+                        }
+                    }
+                }
+                
+                // Alternative: Also count from product popularity (this tracks all interactions)
+                long totalProductInteractions = 0;
+                Set<String> popularityKeys = redisTemplate.keys("product:popularity:*");
+                if (popularityKeys != null && !popularityKeys.isEmpty()) {
+                    for (String key : popularityKeys) {
+                        Object value = redisTemplate.opsForValue().get(key);
+                        if (value != null) {
+                            try {
+                                totalProductInteractions += Long.parseLong(value.toString());
+                            } catch (NumberFormatException e) {
+                                // Ignore
+                            }
+                        }
+                    }
+                }
+                
+                // Use the higher value between direct count and product popularity count
+                long totalInteractions = Math.max(
+                    totalViews + totalClicks + totalAddToCart + totalPurchases,
+                    totalProductInteractions
+                );
+                
+                stats.put("totalUsers", (long) uniqueUsers.size());
+                stats.put("totalViews", totalViews);
+                stats.put("totalClicks", totalClicks);
+                stats.put("totalAddToCart", totalAddToCart);
+                stats.put("totalPurchases", totalPurchases);
+                stats.put("totalInteractions", totalInteractions);
+                stats.put("trackedProducts", popularityKeys != null ? (long) popularityKeys.size() : 0L);
+                
+                logger.debug("Interaction stats - Users: {}, Views: {}, Clicks: {}, AddToCart: {}, Purchases: {}, Total: {}", 
+                    uniqueUsers.size(), totalViews, totalClicks, totalAddToCart, totalPurchases, totalInteractions);
+            } else {
+                // Redis not available, return empty stats
+                logger.warn("Redis template is null, returning empty interaction statistics");
+                stats.put("totalUsers", 0L);
+                stats.put("totalViews", 0L);
+                stats.put("totalClicks", 0L);
+                stats.put("totalAddToCart", 0L);
+                stats.put("totalPurchases", 0L);
+                stats.put("totalInteractions", 0L);
+                stats.put("trackedProducts", 0L);
+            }
+        } catch (Exception e) {
+            logger.error("Error getting interaction statistics: {}", e.getMessage(), e);
+            stats.put("totalUsers", 0L);
+            stats.put("totalViews", 0L);
+            stats.put("totalClicks", 0L);
+            stats.put("totalAddToCart", 0L);
+            stats.put("totalPurchases", 0L);
+            stats.put("totalInteractions", 0L);
+            stats.put("trackedProducts", 0L);
+        }
+        
+        return stats;
+    }
+    
+    /**
+     * Test Redis connection
+     * Returns connection status and test operations
+     */
+    public Map<String, Object> testRedisConnection() {
+        Map<String, Object> result = new HashMap<>();
+        
+        try {
+            if (redisTemplate == null) {
+                result.put("connected", false);
+                result.put("message", "RedisTemplate is null - Redis may not be configured");
+                result.put("error", "RedisTemplate not available");
+                logger.warn("RedisTemplate is null - Redis connection not available");
+                return result;
+            }
+            
+            // Test 1: Ping Redis
+            try {
+                RedisConnectionFactory connectionFactory = redisTemplate.getConnectionFactory();
+                if (connectionFactory != null) {
+                    connectionFactory.getConnection().ping();
+                    result.put("ping", "OK");
+                } else {
+                    result.put("ping", "FAILED");
+                    result.put("pingError", "ConnectionFactory is null");
+                    logger.error("Redis ConnectionFactory is null");
+                }
+            } catch (Exception e) {
+                result.put("ping", "FAILED");
+                result.put("pingError", e.getMessage());
+                logger.error("Redis ping failed: {}", e.getMessage());
+            }
+            
+            // Test 2: Write and read test data
+            String testKey = "test:connection:" + System.currentTimeMillis();
+            String testValue = "test-value-" + System.currentTimeMillis();
+            
+            try {
+                redisTemplate.opsForValue().set(testKey, testValue, 10, TimeUnit.SECONDS);
+                Object retrievedValue = redisTemplate.opsForValue().get(testKey);
+                
+                if (testValue.equals(retrievedValue)) {
+                    result.put("writeRead", "OK");
+                    result.put("testValue", retrievedValue);
+                } else {
+                    result.put("writeRead", "FAILED");
+                    result.put("message", "Value mismatch");
+                }
+                
+                // Clean up
+                redisTemplate.delete(testKey);
+            } catch (Exception e) {
+                result.put("writeRead", "FAILED");
+                result.put("writeReadError", e.getMessage());
+                logger.error("Redis write/read test failed: {}", e.getMessage());
+            }
+            
+            // Test 3: Check existing keys
+            try {
+                Set<String> testKeys = redisTemplate.keys("user:behavior:*");
+                int behaviorKeysCount = testKeys != null ? testKeys.size() : 0;
+                result.put("existingBehaviorKeys", behaviorKeysCount);
+                
+                Set<String> popularityKeys = redisTemplate.keys("product:popularity:*");
+                int popularityKeysCount = popularityKeys != null ? popularityKeys.size() : 0;
+                result.put("existingPopularityKeys", popularityKeysCount);
+            } catch (Exception e) {
+                result.put("keyScan", "FAILED");
+                result.put("keyScanError", e.getMessage());
+                logger.error("Redis key scan failed: {}", e.getMessage());
+            }
+            
+            // Overall status
+            boolean connected = "OK".equals(result.get("ping")) && "OK".equals(result.get("writeRead"));
+            result.put("connected", connected);
+            result.put("message", connected ? "Redis connection is working properly" : "Redis connection has issues");
+            result.put("timestamp", System.currentTimeMillis());
+            
+            logger.info("Redis connection test - Connected: {}, Ping: {}, WriteRead: {}", 
+                connected, result.get("ping"), result.get("writeRead"));
+            
+        } catch (Exception e) {
+            logger.error("Error testing Redis connection: {}", e.getMessage(), e);
+            result.put("connected", false);
+            result.put("message", "Error testing Redis connection: " + e.getMessage());
+            result.put("error", e.getMessage());
+        }
+        
+        return result;
     }
 }

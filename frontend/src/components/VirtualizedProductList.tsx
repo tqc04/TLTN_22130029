@@ -17,8 +17,8 @@ interface VirtualizedProductListProps {
   onToggleFavorite?: (productId: string) => void;
   onViewDetails?: (productId: string) => void;
   onAddToCompare?: (productId: string) => void;
-  favorites?: number[];
-  compareList?: number[];
+  favorites?: string[];
+  compareList?: string[];
   columns?: number;
   height?: number;
   itemHeight?: number;

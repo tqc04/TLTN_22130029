@@ -149,6 +149,63 @@ public class ProductRepository {
         
         return null;
     }
+
+    /**
+     * Get full product info by ID (with category + brand), consistent with searchProducts()
+     */
+    @Transactional(readOnly = true)
+    public Map<String, Object> getProductFullById(Long productId) {
+        String softDeleteFilter = hasIsDeletedColumn()
+            ? "              AND (p.is_deleted = 0 OR p.is_deleted IS NULL)\n"
+            : "";
+
+        String sql = String.format("""
+            SELECT p.id, p.name, p.description, p.price, p.sale_price,
+                   p.category_id, p.brand_id, p.stock_quantity, p.average_rating,
+                   p.view_count, p.purchase_count, p.sku, p.image_url, p.review_count,
+                   c.name as category_name, b.name as brand_name
+            FROM products p
+            LEFT JOIN categories c ON p.category_id = c.id
+            LEFT JOIN brands b ON p.brand_id = b.id
+            WHERE p.is_active = 1
+%s
+              AND p.id = :productId
+            LIMIT 1
+            """, softDeleteFilter);
+
+        try {
+            Query query = entityManager.createNativeQuery(sql);
+            query.setParameter("productId", productId);
+
+            @SuppressWarnings("unchecked")
+            List<Object[]> results = query.getResultList();
+            if (results == null || results.isEmpty()) {
+                return null;
+            }
+
+            Object[] row = results.get(0);
+            Map<String, Object> product = new HashMap<>();
+            product.put("id", row[0]);
+            product.put("name", row[1]);
+            product.put("description", row[2]);
+            product.put("price", row[3]);
+            product.put("sale_price", row[4]);
+            product.put("category_id", row[5]);
+            product.put("brand_id", row[6]);
+            product.put("stock_quantity", row[7]);
+            product.put("average_rating", row[8]);
+            product.put("view_count", row[9]);
+            product.put("purchase_count", row[10]);
+            product.put("sku", row[11] != null ? row[11] : "");
+            product.put("image_url", row[12] != null ? row[12] : "");
+            product.put("review_count", row[13] != null ? row[13] : 0);
+            product.put("category_name", row[14] != null ? row[14] : "");
+            product.put("brand_name", row[15] != null ? row[15] : "");
+            return product;
+        } catch (Exception e) {
+            return null;
+        }
+    }
     
     /**
      * Get popular products

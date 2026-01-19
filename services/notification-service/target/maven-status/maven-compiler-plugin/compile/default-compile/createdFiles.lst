@@ -1,4 +1,5 @@
 com\example\notification\service\NotificationService.class
+com\example\notification\service\UserServiceClient.class
 com\example\notification\config\SecurityConfig.class
 com\example\notification\service\WarrantyEventConsumer.class
 com\example\notification\NotificationServiceApplication.class
@@ -8,6 +9,7 @@ com\example\notification\entity\NotificationType.class
 com\example\notification\service\WishlistNotificationService.class
 com\example\notification\controller\SupportController.class
 com\example\notification\service\EmailService.class
+com\example\notification\service\UserServiceClientFallback.class
 com\example\notification\entity\Notification.class
 com\example\notification\controller\NotificationController.class
 com\example\notification\config\KafkaConsumerConfig.class

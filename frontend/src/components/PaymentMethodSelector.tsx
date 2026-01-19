@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 import {
   CreditCard,
-  AccountBalance,
   Money,
   Payment,
 } from '@mui/icons-material';
@@ -28,13 +27,14 @@ interface PaymentMethodSelectorProps {
 const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
   selectedMethod,
   creditCardGateway,
-  selectedBank,
+  selectedBank: _selectedBank,
   onMethodChange,
   onGatewayChange,
-  onBankChange,
+  onBankChange: _onBankChange,
 }) => {
   // selectedBank & onBankChange vẫn giữ trong props để tránh breaking change,
   // nhưng hiện tại không còn sử dụng vì đã bỏ Bank Transfer và MoMo.
+  void _selectedBank; void _onBankChange;
 
   return (
     <Card sx={{ maxWidth: 600, mx: 'auto', mt: 2 }}>

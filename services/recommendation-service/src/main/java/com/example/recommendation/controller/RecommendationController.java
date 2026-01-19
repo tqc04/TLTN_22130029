@@ -83,4 +83,34 @@ public class RecommendationController {
     public ResponseEntity<String> health() {
         return ResponseEntity.ok("Recommendation API is working!");
     }
+    
+    /**
+     * Get real-time interaction statistics
+     * Returns counts of different user behaviors (views, clicks, add_to_cart, purchases)
+     */
+    @GetMapping("/interactions/stats")
+    public ResponseEntity<Map<String, Object>> getInteractionStats() {
+        try {
+            Map<String, Object> stats = recommendationService.getInteractionStatistics();
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+    
+    /**
+     * Test Redis connection
+     * Returns connection status and test data
+     */
+    @GetMapping("/redis/test")
+    public ResponseEntity<Map<String, Object>> testRedis() {
+        Map<String, Object> result = recommendationService.testRedisConnection();
+        boolean connected = (Boolean) result.getOrDefault("connected", false);
+        
+        if (connected) {
+            return ResponseEntity.ok(result);
+        } else {
+            return ResponseEntity.status(503).body(result);
+        }
+    }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import {
   Card,
   CardContent,
@@ -37,7 +37,11 @@ import {
   AttachMoney,
   ShoppingCart,
   People,
-  Inventory
+  Inventory,
+  Visibility,
+  TouchApp,
+  AddShoppingCart,
+  CheckCircle
 } from '@mui/icons-material'
 import { apiService } from '../services/api'
 
@@ -64,6 +68,15 @@ interface AnalyticsData {
   categoryDistribution: { name: string; value: number }[]
   topProducts: { name: string; sales: number; revenue: number }[]
   salesByDay: { day: string; sales: number; orders: number }[]
+  interactions: {
+    totalUsers: number
+    totalViews: number
+    totalClicks: number
+    totalAddToCart: number
+    totalPurchases: number
+    totalInteractions: number
+    trackedProducts: number
+  }
 }
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16']
@@ -73,23 +86,31 @@ const AnalyticsAdminPage: React.FC = () => {
   const [tabValue, setTabValue] = useState(0)
   const [timeRange, setTimeRange] = useState<'7days' | '30days' | '90days' | 'year'>('30days')
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null)
+  const [autoRefresh, setAutoRefresh] = useState(true)
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
+  const timeRangeRef = useRef(timeRange)
 
+  // Update ref when timeRange changes
   useEffect(() => {
-    fetchAnalyticsData()
+    timeRangeRef.current = timeRange
   }, [timeRange])
 
-  const fetchAnalyticsData = async () => {
-    setLoading(true)
+  const fetchAnalyticsData = useCallback(async (showLoading: boolean = true) => {
+    if (showLoading) {
+      setLoading(true)
+    }
     try {
-      // Fetch real data from backend API
-      const [overviewRes, salesRes, salesByPeriodRes, usersRes, productsRes, categoryRes, topProductsRes] = await Promise.all([
+      // Fetch real data from backend API - use ref to get latest timeRange
+      const currentTimeRange = timeRangeRef.current
+      const [overviewRes, salesRes, salesByPeriodRes, usersRes, productsRes, categoryRes, topProductsRes, interactionsRes] = await Promise.all([
         apiService.getAnalyticsOverview(),
-        apiService.getAnalyticsSales(timeRange),
+        apiService.getAnalyticsSales(currentTimeRange),
         apiService.getAnalyticsSalesByPeriod('day'),
         apiService.getAnalyticsUsers(),
         apiService.getAnalyticsProducts(),
         apiService.getCategoryDistribution(),
-        apiService.getTopProducts(5)
+        apiService.getTopProducts(5),
+        apiService.getInteractionStats()
       ])
 
       const overview = overviewRes.data || {
@@ -110,6 +131,15 @@ const AnalyticsAdminPage: React.FC = () => {
       const products = productsRes.data || { total: 0, lowStock: 0 }
       const categories = categoryRes.data || []
       const topProducts = topProductsRes.data || []
+      const interactions = interactionsRes.data || {
+        totalUsers: 0,
+        totalViews: 0,
+        totalClicks: 0,
+        totalAddToCart: 0,
+        totalPurchases: 0,
+        totalInteractions: 0,
+        trackedProducts: 0
+      }
 
       // Calculate change percentage (simplified - compare with previous period)
       const previousPeriodSales = sales.values.length > 0 
@@ -161,10 +191,12 @@ const AnalyticsAdminPage: React.FC = () => {
           sales: p.totalQuantity || 0,
           revenue: p.totalRevenue || 0
         })),
-        salesByDay
+        salesByDay,
+        interactions
       }
 
       setAnalyticsData(analyticsData)
+      setLastUpdate(new Date())
     } catch (error) {
       console.error('Failed to fetch analytics:', error)
       // Fallback to empty data on error
@@ -175,12 +207,42 @@ const AnalyticsAdminPage: React.FC = () => {
         products: { total: 0, lowStock: 0 },
         categoryDistribution: [],
         topProducts: [],
-        salesByDay: []
+        salesByDay: [],
+        interactions: {
+          totalUsers: 0,
+          totalViews: 0,
+          totalClicks: 0,
+          totalAddToCart: 0,
+          totalPurchases: 0,
+          totalInteractions: 0,
+          trackedProducts: 0
+        }
       })
     } finally {
-      setLoading(false)
+      if (showLoading) {
+        setLoading(false)
+      }
     }
-  }
+  }, [timeRange])
+
+  // Initial load and when timeRange changes
+  useEffect(() => {
+    fetchAnalyticsData()
+  }, [fetchAnalyticsData])
+
+  // Auto-refresh every 10 seconds if enabled
+  useEffect(() => {
+    if (!autoRefresh) return
+    
+    const intervalId = setInterval(() => {
+      fetchAnalyticsData(false) // Don't show loading spinner on auto-refresh
+      setLastUpdate(new Date())
+    }, 10000) // Refresh every 10 seconds
+    
+    return () => {
+      clearInterval(intervalId)
+    }
+  }, [autoRefresh, fetchAnalyticsData])
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value)
@@ -251,23 +313,43 @@ const AnalyticsAdminPage: React.FC = () => {
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-          Analytics Dashboard
-        </Typography>
-        <FormControl size="small" sx={{ minWidth: 150 }}>
-          <InputLabel>Time Range</InputLabel>
-          <Select
-            value={timeRange}
-            label="Time Range"
-            onChange={(e) => setTimeRange(e.target.value as any)}
-          >
-            <MenuItem value="7days">Last 7 Days</MenuItem>
-            <MenuItem value="30days">Last 30 Days</MenuItem>
-            <MenuItem value="90days">Last 90 Days</MenuItem>
-            <MenuItem value="year">This Year</MenuItem>
-          </Select>
-        </FormControl>
+      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+        <Box>
+          <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+            Analytics Dashboard
+          </Typography>
+          {lastUpdate && (
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+              Cập nhật lần cuối: {lastUpdate.toLocaleTimeString('vi-VN')}
+              {autoRefresh && ' (Tự động cập nhật mỗi 10 giây)'}
+            </Typography>
+          )}
+        </Box>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <InputLabel>Time Range</InputLabel>
+            <Select
+              value={timeRange}
+              label="Time Range"
+              onChange={(e) => setTimeRange(e.target.value as any)}
+            >
+              <MenuItem value="7days">Last 7 Days</MenuItem>
+              <MenuItem value="30days">Last 30 Days</MenuItem>
+              <MenuItem value="90days">Last 90 Days</MenuItem>
+              <MenuItem value="year">This Year</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl size="small">
+            <Select
+              value={autoRefresh ? 'on' : 'off'}
+              onChange={(e) => setAutoRefresh(e.target.value === 'on')}
+              sx={{ minWidth: 120 }}
+            >
+              <MenuItem value="on">Auto: ON</MenuItem>
+              <MenuItem value="off">Auto: OFF</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
       </Box>
 
       {/* Stats Cards */}
@@ -309,6 +391,71 @@ const AnalyticsAdminPage: React.FC = () => {
           />
         </Grid>
       </Grid>
+
+      {/* Real-time Interactions Section */}
+      <Card sx={{ borderRadius: 3, mb: 3, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
+        <CardContent>
+          <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2, color: 'white' }}>
+            Real-time User Interactions
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={2}>
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(255,255,255,0.1)', borderRadius: 2 }}>
+                <Visibility sx={{ fontSize: 32, mb: 1 }} />
+                <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                  {analyticsData.interactions.totalViews.toLocaleString()}
+                </Typography>
+                <Typography variant="body2">Views</Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={6} md={2}>
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(255,255,255,0.1)', borderRadius: 2 }}>
+                <TouchApp sx={{ fontSize: 32, mb: 1 }} />
+                <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                  {analyticsData.interactions.totalClicks.toLocaleString()}
+                </Typography>
+                <Typography variant="body2">Clicks</Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={6} md={2}>
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(255,255,255,0.1)', borderRadius: 2 }}>
+                <AddShoppingCart sx={{ fontSize: 32, mb: 1 }} />
+                <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                  {analyticsData.interactions.totalAddToCart.toLocaleString()}
+                </Typography>
+                <Typography variant="body2">Add to Cart</Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={6} md={2}>
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(255,255,255,0.1)', borderRadius: 2 }}>
+                <CheckCircle sx={{ fontSize: 32, mb: 1 }} />
+                <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                  {analyticsData.interactions.totalPurchases.toLocaleString()}
+                </Typography>
+                <Typography variant="body2">Purchases</Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={6} md={2}>
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(255,255,255,0.1)', borderRadius: 2 }}>
+                <People sx={{ fontSize: 32, mb: 1 }} />
+                <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                  {analyticsData.interactions.totalUsers.toLocaleString()}
+                </Typography>
+                <Typography variant="body2">Active Users</Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={6} md={2}>
+              <Box sx={{ textAlign: 'center', p: 2, bgcolor: 'rgba(255,255,255,0.1)', borderRadius: 2 }}>
+                <TrendingUp sx={{ fontSize: 32, mb: 1 }} />
+                <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                  {analyticsData.interactions.totalInteractions.toLocaleString()}
+                </Typography>
+                <Typography variant="body2">Total Interactions</Typography>
+              </Box>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
 
       {/* Tabs */}
       <Paper sx={{ borderRadius: 3, mb: 3 }}>

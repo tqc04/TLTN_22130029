@@ -30,14 +30,9 @@ import {
   CheckCircle, 
   Cancel, 
   Visibility, 
-  Delete,
   Star,
-  Person,
-  ShoppingBag,
-  TrendingUp,
   Warning,
   ThumbUp,
-  ThumbDown
 } from '@mui/icons-material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { apiService } from '../services/api'
@@ -487,14 +482,15 @@ const ReviewsAdminPage: React.FC = () => {
         <DataGrid
           rows={rows}
           columns={columns}
-          page={page}
-          pageSize={pageSize}
-          onPageChange={setPage}
-          onPageSizeChange={setPageSize}
+          paginationModel={{ page, pageSize }}
+          onPaginationModelChange={(model) => {
+            setPage(model.page)
+            setPageSize(model.pageSize)
+          }}
           rowCount={rowCount}
           loading={loading}
           paginationMode="server"
-          disableSelectionOnClick
+          disableRowSelectionOnClick
           sx={{
             '& .MuiDataGrid-cell': {
               borderBottom: '1px solid #e2e8f0',

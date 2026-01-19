@@ -14,8 +14,6 @@ import {
 import {
   Add,
   Remove,
-  Delete,
-  FavoriteOutlined,
   ShoppingBag,
   PaymentOutlined,
   Receipt,
@@ -399,35 +397,6 @@ const ShoppingCartPage: React.FC = () => {
                         <Typography variant="h5" fontWeight="bold" color="primary" sx={{ textAlign: 'center' }}>
                           {formatPrice(item.subtotal ?? (item.productPrice * item.quantity))}
                         </Typography>
-
-                        {/* Actions */}
-                        <Box sx={{ display: 'flex', gap: 1 }}>
-                          <IconButton 
-                            size="small" 
-                            color="primary"
-                            sx={{ 
-                              bgcolor: 'primary.light',
-                              color: 'white',
-                              '&:hover': { bgcolor: 'primary.dark' }
-                            }}
-                          >
-                            <FavoriteOutlined fontSize="small" />
-                          </IconButton>
-                          
-                          <IconButton 
-                            size="small" 
-                            color="error"
-                            onClick={() => handleRemoveItem(item.productId)}
-                            disabled={cartLoading}
-                            sx={{ 
-                              bgcolor: 'error.light',
-                              color: 'white',
-                              '&:hover': { bgcolor: 'error.dark' }
-                            }}
-                          >
-                            <Delete fontSize="small" />
-                          </IconButton>
-                        </Box>
                       </Box>
                     </Grid>
                   </Grid>
@@ -463,7 +432,7 @@ const ShoppingCartPage: React.FC = () => {
                 transition: 'all 0.3s ease'
               }}
             >
-              🛍️ Continue Shopping
+              Continue Shopping
             </Button>
           </Box>
         </Grid>
@@ -537,7 +506,7 @@ const ShoppingCartPage: React.FC = () => {
                 transition: 'all 0.3s ease'
               }}
             >
-              💳 Tiến hành thanh toán
+              Tiến hành thanh toán
           </Button>
 
           {/* Security Info removed as requested */}

@@ -369,20 +369,60 @@ public class NotificationService {
     @Async
     public void sendSupportConfirmationEmail(String email, String name, String subject) {
         try {
-            String emailSubject = "Support Request Received - " + subject;
-            String emailBody = String.format(
-                "Dear %s,\n\n" +
-                "Thank you for contacting us. We have received your support request with the subject: %s\n\n" +
-                "Our support team will review your message and get back to you within 24 hours.\n\n" +
-                "Best regards,\n" +
-                "ShopPro Support Team",
-                name, subject
-            );
+            String safeName = (name != null && !name.isBlank()) ? name.trim() : "bạn";
+            String safeSubject = (subject != null && !subject.isBlank()) ? subject.trim() : "(không có tiêu đề)";
 
-            emailService.sendSimpleEmail(email, emailSubject, emailBody);
+            String emailSubject = "Xác nhận yêu cầu hỗ trợ - " + safeSubject;
+
+            // Use UTF-8 HTML email to ensure Vietnamese characters display correctly across clients
+            String emailBodyHtml = String.format("""
+                <!DOCTYPE html>
+                <html lang="vi">
+                <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <title>Xác nhận yêu cầu hỗ trợ</title>
+                  <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #222; background: #f6f7fb; margin: 0; padding: 0; }
+                    .container { max-width: 640px; margin: 0 auto; padding: 20px; }
+                    .card { background: #ffffff; border-radius: 12px; padding: 22px; border: 1px solid #e7e7ef; }
+                    .brand { font-weight: 800; font-size: 18px; color: #111827; }
+                    .muted { color: #6b7280; font-size: 13px; }
+                    .subject { background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px 14px; margin: 12px 0; }
+                    .footer { margin-top: 16px; color: #6b7280; font-size: 12px; }
+                  </style>
+                </head>
+                <body>
+                  <div class="container">
+                    <div class="card">
+                      <div class="brand">TechHub</div>
+                      <p>Xin chào <strong>%s</strong>,</p>
+                      <p>Cảm ơn bạn đã liên hệ TechHub. Chúng tôi đã nhận được yêu cầu hỗ trợ của bạn với tiêu đề:</p>
+                      <div class="subject"><strong>%s</strong></div>
+                      <p>Đội ngũ hỗ trợ sẽ xem xét và phản hồi bạn trong vòng <strong>24 giờ</strong>.</p>
+                      <p>Trân trọng,<br><strong>TechHub Support Team</strong></p>
+                      <div class="footer">
+                        Email này được gửi tự động, vui lòng không trả lời trực tiếp email này.
+                      </div>
+                    </div>
+                  </div>
+                </body>
+                </html>
+                """, escapeHtml(safeName), escapeHtml(safeSubject));
+
+            emailService.sendHtmlEmail(email, emailSubject, emailBodyHtml);
         } catch (Exception e) {
             logger.error("Error sending support confirmation email: {}", e.getMessage(), e);
         }
+    }
+
+    private String escapeHtml(String s) {
+        if (s == null) return "";
+        return s.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
     }
 
     /**

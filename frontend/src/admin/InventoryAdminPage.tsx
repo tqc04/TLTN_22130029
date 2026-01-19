@@ -99,7 +99,7 @@ const InventoryAdminPage: React.FC = () => {
     setRestocking(true)
     try {
       const response = await apiService.adminRestockProduct(
-        selectedItem.productId,
+        String(selectedItem.productId),
         restockQuantity,
         selectedItem.warehouseId
       )

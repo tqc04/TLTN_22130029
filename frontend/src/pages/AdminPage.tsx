@@ -10,6 +10,13 @@ import {
   Chip,
   Alert,
   Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper
 } from '@mui/material';
 import {
   People,
@@ -31,89 +38,97 @@ const AdminPage: React.FC = () => {
     totalProducts: 0,
     totalOrders: 0,
     totalRevenue: 0,
-    recentOrders: [],
+    ordersToday: 0,
+    revenueToday: 0,
+    pendingOrders: 0,
+    processingOrders: 0,
+    recentOrders: [] as any[],
     topProducts: [],
-    userGrowth: [],
+    lowStockItems: 0
   });
 
   useEffect(() => {
     console.log('AdminPage - Component mounted, loading dashboard data...');
     loadDashboardData();
-  }, []);
+  }, [user]);
 
   const loadDashboardData = async () => {
     try {
       console.log('AdminPage - Loading dashboard data...');
       
-      // Load data based on user role
-      if (user?.role === 'ADMIN') {
-        // Admin can see everything
-        const [usersRes, productsRes, ordersRes] = await Promise.all([
-          apiService.getUsers(),
-          apiService.adminGetProducts(0, 1),
-          apiService.adminGetOrders(0, 1),
-        ]);
-        
-        setStats({
-          totalUsers: Array.isArray(usersRes.data) ? usersRes.data.length : 0,
-          totalProducts: productsRes.data?.totalElements || 0,
-          totalOrders: ordersRes.data?.totalElements || 0,
-          totalRevenue: 0,
-          recentOrders: [],
-          topProducts: [],
-          userGrowth: [],
-        });
-      } else if (user?.role === 'PRODUCT_MANAGER') {
-        // Product Manager only sees product-related data
-        const productsRes = await apiService.adminGetProducts(0, 1);
-        
-        setStats({
-          totalUsers: 0, // Not accessible
-          totalProducts: productsRes.data?.totalElements || 0,
-          totalOrders: 0, // Not accessible
-          totalRevenue: 0,
-          recentOrders: [],
-          topProducts: [],
-          userGrowth: [],
-        });
-      } else if (user?.role === 'USER_MANAGER') {
-        // User Manager only sees user-related data
-        const usersRes = await apiService.getUsers();
-        
-        setStats({
-          totalUsers: Array.isArray(usersRes.data) ? usersRes.data.length : 0,
-          totalProducts: 0, // Not accessible
-          totalOrders: 0, // Not accessible
-          totalRevenue: 0,
-          recentOrders: [],
-          topProducts: [],
-          userGrowth: [],
-        });
-      } else if (user?.role === 'MODERATOR') {
-        // Moderator sees orders and inventory
-        const [ordersRes, productsRes] = await Promise.all([
-          apiService.adminGetOrders(0, 1),
-          apiService.adminGetProducts(0, 1),
-        ]);
-        
-        setStats({
-          totalUsers: 0, // Not accessible
-          totalProducts: productsRes.data?.totalElements || 0,
-          totalOrders: ordersRes.data?.totalElements || 0,
-          totalRevenue: 0,
-          recentOrders: [],
-          topProducts: [],
-          userGrowth: [],
-        });
+      // Load common data first
+      let usersCount = 0;
+      let productsCount = 0;
+      let lowStock = 0;
+
+      // 1. Fetch Users (if authorized)
+      if (user?.role === 'ADMIN' || user?.role === 'USER_MANAGER') {
+        try {
+          const usersRes = await apiService.getUsers();
+          // Fix: Check for content array or totalElements if paginated
+          if (usersRes.data && typeof usersRes.data.totalElements === 'number') {
+             usersCount = usersRes.data.totalElements;
+          } else if (Array.isArray(usersRes.data)) {
+             usersCount = usersRes.data.length;
+          } else if (usersRes.data && Array.isArray(usersRes.data.content)) {
+             // Fallback for some pagination structures
+             usersCount = usersRes.data.totalElements || usersRes.data.content.length;
+          }
+        } catch (e) { console.error("Failed to fetch users", e); }
       }
-      
-      console.log('AdminPage - Dashboard data loaded for role:', user?.role);
+
+      // 2. Fetch Products (if authorized)
+      if (user?.role === 'ADMIN' || user?.role === 'PRODUCT_MANAGER' || user?.role === 'MODERATOR') {
+        try {
+          const productsRes = await apiService.adminGetProducts(0, 1000); // Fetch more to check stock
+          productsCount = productsRes.data?.totalElements || 0;
+          
+          // Calculate low stock items (quantity < 10)
+          if (productsRes.data?.content) {
+             lowStock = productsRes.data.content.filter((p: any) => p.quantity < 10).length;
+          }
+        } catch (e) { console.error("Failed to fetch products", e); }
+      }
+
+      // 3. Fetch Operational Stats (Revenue, Orders, Recent Activity)
+      // This is the new endpoint we created for "Dynamic Data"
+      if (user?.role === 'ADMIN' || user?.role === 'MODERATOR' || user?.role === 'STAFF') {
+        try {
+          const statsRes = await apiService.getDashboardStats();
+          if (statsRes.success && statsRes.data) {
+             const d = statsRes.data;
+             setStats({
+               totalUsers: usersCount,
+               totalProducts: productsCount,
+               totalOrders: d.totalOrders || 0,
+               totalRevenue: d.totalRevenue || 0,
+               ordersToday: d.ordersToday || 0,
+               revenueToday: d.revenueToday || 0,
+               pendingOrders: d.pendingOrders || 0,
+               processingOrders: d.processingOrders || 0,
+               recentOrders: d.recentOrders || [],
+               topProducts: [],
+               lowStockItems: lowStock
+             });
+             return; // Exit early as we set everything
+          }
+        } catch (e) { console.error("Failed to fetch dashboard stats", e); }
+      }
+
+      // Fallback update if stats call failed or unauthorized for stats
+      setStats(prev => ({
+        ...prev,
+        totalUsers: usersCount,
+        totalProducts: productsCount,
+        lowStockItems: lowStock
+      }));
+
     } catch (error) {
       console.error('Error loading dashboard data:', error);
     }
   };
 
-  const StatCard = ({ title, value, icon, color, onClick }: any) => (
+  const StatCard = ({ title, value, icon, color, onClick, subValue }: any) => (
     <Card 
       sx={{ 
         height: '100%', 
@@ -132,6 +147,11 @@ const AdminPage: React.FC = () => {
             <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
               {title}
             </Typography>
+            {subValue && (
+                <Typography variant="caption" sx={{ color: 'text.secondary', mt: 1, display: 'block' }}>
+                    {subValue}
+                </Typography>
+            )}
           </Box>
           <Box sx={{ 
             p: 2, 
@@ -217,13 +237,13 @@ const AdminPage: React.FC = () => {
           Admin Dashboard
         </Typography>
         <Typography variant="h6" color="text.secondary">
-          Welcome back, {user.firstName}! Here's what's happening with your store.
+          Welcome back, {user.firstName}! Here's what's happening with your store today.
         </Typography>
       </Box>
 
       {/* Stats Cards - Hiển thị theo role */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        {/* Users Card - Chỉ hiển thị cho ADMIN và USER_MANAGER */}
+        {/* Users Card */}
         {(user?.role === 'ADMIN' || user?.role === 'USER_MANAGER') && (
           <Grid item xs={12} sm={6} md={3}>
             <StatCard
@@ -236,12 +256,13 @@ const AdminPage: React.FC = () => {
           </Grid>
         )}
         
-        {/* Products Card - Chỉ hiển thị cho ADMIN và PRODUCT_MANAGER */}
+        {/* Products Card */}
         {(user?.role === 'ADMIN' || user?.role === 'PRODUCT_MANAGER') && (
           <Grid item xs={12} sm={6} md={3}>
             <StatCard
               title="Total Products"
               value={stats.totalProducts.toLocaleString()}
+              subValue={`${stats.lowStockItems} low stock items`}
               icon={<Inventory sx={{ fontSize: 28 }} />}
               color="#10b981"
               onClick={() => navigate('/admin/products')}
@@ -249,12 +270,13 @@ const AdminPage: React.FC = () => {
           </Grid>
         )}
         
-        {/* Orders Card - Chỉ hiển thị cho ADMIN và MODERATOR */}
+        {/* Orders Card */}
         {(user?.role === 'ADMIN' || user?.role === 'MODERATOR') && (
           <Grid item xs={12} sm={6} md={3}>
             <StatCard
               title="Total Orders"
               value={stats.totalOrders.toLocaleString()}
+              subValue={`${stats.ordersToday} today`}
               icon={<ShoppingCart sx={{ fontSize: 28 }} />}
               color="#f59e0b"
               onClick={() => navigate('/admin/orders')}
@@ -262,12 +284,13 @@ const AdminPage: React.FC = () => {
           </Grid>
         )}
         
-        {/* Revenue Card - Chỉ hiển thị cho ADMIN */}
+        {/* Revenue Card */}
         {user?.role === 'ADMIN' && (
           <Grid item xs={12} sm={6} md={3}>
             <StatCard
               title="Total Revenue"
-              value={`$${stats.totalRevenue.toLocaleString()}`}
+              value={stats.totalRevenue.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+              subValue={`+${stats.revenueToday.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })} today`}
               icon={<AttachMoney sx={{ fontSize: 28 }} />}
               color="#ef4444"
             />
@@ -277,7 +300,6 @@ const AdminPage: React.FC = () => {
 
       {/* Quick Actions - Hiển thị theo role */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        {/* Products Management - Chỉ hiển thị cho ADMIN và PRODUCT_MANAGER */}
         {(user?.role === 'ADMIN' || user?.role === 'PRODUCT_MANAGER') && (
           <Grid item xs={12} md={6}>
             <QuickActionCard
@@ -290,7 +312,6 @@ const AdminPage: React.FC = () => {
           </Grid>
         )}
         
-        {/* Orders Management - Chỉ hiển thị cho ADMIN và MODERATOR */}
         {(user?.role === 'ADMIN' || user?.role === 'MODERATOR') && (
           <Grid item xs={12} md={6}>
             <QuickActionCard
@@ -303,7 +324,6 @@ const AdminPage: React.FC = () => {
           </Grid>
         )}
         
-        {/* User Management - Chỉ hiển thị cho ADMIN và USER_MANAGER */}
         {(user?.role === 'ADMIN' || user?.role === 'USER_MANAGER') && (
           <Grid item xs={12} md={6}>
             <QuickActionCard
@@ -316,12 +336,11 @@ const AdminPage: React.FC = () => {
           </Grid>
         )}
         
-        {/* Analytics - Chỉ hiển thị cho ADMIN */}
         {user?.role === 'ADMIN' && (
           <Grid item xs={12} md={6}>
             <QuickActionCard
               title="Analytics & Reports"
-              description="View sales reports, user analytics, and insights"
+              description="View detailed sales reports, charts, and business insights"
               icon={<Analytics />}
               color="#8b5cf6"
               onClick={() => navigate('/admin/analytics')}
@@ -330,51 +349,98 @@ const AdminPage: React.FC = () => {
         )}
       </Grid>
 
-      {/* Recent Activity */}
+      {/* Recent Activity & Quick Stats */}
       <Grid container spacing={3}>
+        {/* Recent Orders Table */}
         <Grid item xs={12} md={8}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
                 <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                  Recent Activity
+                  Recent Orders (Live)
                 </Typography>
-                <Button size="small" endIcon={<ArrowForward />}>
+                <Button size="small" endIcon={<ArrowForward />} onClick={() => navigate('/admin/orders')}>
                   View All
                 </Button>
               </Box>
-              <Box sx={{ minHeight: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Typography variant="body2" color="text.secondary">
-                  No recent activity to display
-                </Typography>
-              </Box>
+              
+              {stats.recentOrders.length > 0 ? (
+                <TableContainer component={Paper} elevation={0}>
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Order ID</TableCell>
+                                <TableCell>Customer</TableCell>
+                                <TableCell>Amount</TableCell>
+                                <TableCell>Status</TableCell>
+                                <TableCell>Date</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {stats.recentOrders.map((order: any) => (
+                                <TableRow key={order.id} hover>
+                                    <TableCell>{order.orderNumber}</TableCell>
+                                    <TableCell>{order.userId}</TableCell>
+                                    <TableCell>{order.totalAmount?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</TableCell>
+                                    <TableCell>
+                                        <Chip 
+                                            label={order.status} 
+                                            size="small" 
+                                            color={
+                                                order.status === 'COMPLETED' || order.status === 'DELIVERED' ? 'success' :
+                                                order.status === 'PENDING' ? 'warning' :
+                                                order.status === 'CANCELLED' ? 'error' : 'primary'
+                                            } 
+                                        />
+                                    </TableCell>
+                                    <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+              ) : (
+                <Box sx={{ minHeight: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Typography variant="body2" color="text.secondary">
+                    No recent activity to display
+                    </Typography>
+                </Box>
+              )}
             </CardContent>
           </Card>
         </Grid>
+
+        {/* Operational Quick Stats */}
         <Grid item xs={12} md={4}>
           <Card sx={{ height: '100%' }}>
             <CardContent>
               <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>
-                Quick Stats
+                Operational Status
               </Typography>
               <Stack spacing={2}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <Typography variant="body2" color="text.secondary">
-                    Orders Today
+                    Pending Orders (Action Required)
                   </Typography>
-                  <Chip label="0" size="small" color="primary" />
+                  <Chip label={stats.pendingOrders} size="small" color={stats.pendingOrders > 0 ? "warning" : "default"} />
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <Typography variant="body2" color="text.secondary">
-                    New Users
+                    Processing Orders
                   </Typography>
-                  <Chip label="0" size="small" color="success" />
+                  <Chip label={stats.processingOrders} size="small" color="info" />
+                </Box>
+                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Typography variant="body2" color="text.secondary">
+                    Orders Today
+                  </Typography>
+                  <Chip label={stats.ordersToday} size="small" color="primary" />
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <Typography variant="body2" color="text.secondary">
                     Low Stock Items
                   </Typography>
-                  <Chip label="0" size="small" color="warning" />
+                  <Chip label={stats.lowStockItems} size="small" color={stats.lowStockItems > 0 ? "error" : "success"} />
                 </Box>
               </Stack>
             </CardContent>
@@ -385,4 +451,4 @@ const AdminPage: React.FC = () => {
   );
 };
 
-export default AdminPage; 
+export default AdminPage;

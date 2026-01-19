@@ -1776,7 +1776,7 @@ class ApiService {
   /**
    * Send AI chat message (Public - No auth required)
    */
-  async sendChatMessagePublic(message: string, userId?: string): Promise<ApiResponse<ChatMessage>> {
+  async sendChatMessagePublic(message: string, userId?: string, sessionId?: string): Promise<ApiResponse<ChatMessage>> {
     try {
       // Get userId from localStorage if not provided
       if (!userId) {
@@ -1793,7 +1793,8 @@ class ApiService {
       
       const response = await apiClient.post('/api/ai/chat/public', {
         message,
-        userId: userId || undefined // Only send userId if it exists
+        userId: userId || undefined, // Only send userId if it exists
+        sessionId: sessionId || undefined
       })
       return {
         data: response.data,
@@ -3265,6 +3266,66 @@ class ApiService {
         data: [],
         success: false,
         message: error.response?.data?.message || 'Failed to get category distribution'
+      }
+    }
+  }
+
+  async getInteractionStats(): Promise<ApiResponse<{
+    totalUsers: number
+    totalViews: number
+    totalClicks: number
+    totalAddToCart: number
+    totalPurchases: number
+    totalInteractions: number
+    trackedProducts: number
+  }>> {
+    try {
+      const response = await apiClient.get('/api/admin/analytics/interactions')
+      return {
+        data: response.data || {
+          totalUsers: 0,
+          totalViews: 0,
+          totalClicks: 0,
+          totalAddToCart: 0,
+          totalPurchases: 0,
+          totalInteractions: 0,
+          trackedProducts: 0
+        },
+        success: true,
+        message: 'Interaction statistics retrieved successfully'
+      }
+    } catch (error: any) {
+      console.error('Failed to get interaction stats:', error)
+      return {
+        data: {
+          totalUsers: 0,
+          totalViews: 0,
+          totalClicks: 0,
+          totalAddToCart: 0,
+          totalPurchases: 0,
+          totalInteractions: 0,
+          trackedProducts: 0
+        },
+        success: false,
+        message: error.response?.data?.message || 'Failed to get interaction statistics'
+      }
+    }
+  }
+
+  async getDashboardStats(): Promise<ApiResponse<any>> {
+    try {
+      const response = await apiClient.get('/api/orders/dashboard-stats')
+      return {
+        data: response.data,
+        success: true,
+        message: 'Dashboard stats retrieved successfully'
+      }
+    } catch (error: any) {
+      console.error('Failed to get dashboard stats:', error)
+      return {
+        data: null,
+        success: false,
+        message: error.response?.data?.message || 'Failed to get dashboard stats'
       }
     }
   }
